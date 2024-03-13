@@ -14,7 +14,7 @@
 - [ ] Scoreboard
 - [ ] Localization
 - [ ] Can't spawn in the middle of the round
-- [ ] Early round rdm
+- [ ] ~~Early round rdm~~
 - [ ] ~~Logs~~
 
 # After Base

@@ -1,8 +1,10 @@
 # cs2TTT
 
+
+# Base Release
 - [ ] ~~Team assignemnt~~
 - [ ] Bodies
-- [ ] Models on fllor
+- [ ] Models on floor
 - [ ] ID models
 - [ ] Detective scan
 - [ ] ~~Tazer~~
@@ -12,4 +14,10 @@
 - [ ] Scoreboard
 - [ ] Localization
 - [ ] Can't spawn in the middle of the round
+- [ ] Early round rdm
 - [ ] ~~Logs~~
+
+# After Base
+- [ ] Shop
+- [ ] Karma
+- [ ] RDM Manager

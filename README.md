@@ -8,6 +8,7 @@
 - [ ] ~~Tazer~~
 - [ ] Shop
 - [ ] Distinguish Traitors
+     - [ ] Needs a fix
 - [ ] Scoreboard
 - [ ] Localization
 - [ ] Can't spawn in the middle of the round

@@ -8,7 +8,6 @@
 - [ ] ID models
 - [ ] Detective scan
 - [ ] ~~Tazer~~
-- [ ] Shop
 - [ ] Distinguish Traitors
      - [ ] Needs a fix
 - [ ] Scoreboard

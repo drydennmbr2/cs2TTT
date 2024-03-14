@@ -36,11 +36,22 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
         parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        parent.RegisterEventHandler<EventGameStart>(OnMapStart);
     }
+    
+    [GameEventHandler]
+    private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+    {
+        _roundService.SetRoundStatus(RoundStatus.Waiting);
+        return HookResult.Continue;
+    }
+    
 
     [GameEventHandler]
-    private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info) {
-        return AddRoles();
+    public HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
+    {
+        _roundService.TickWaiting();
+        return HookResult.Continue;
     }
 
     [GameEventHandler]
@@ -83,7 +94,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         return HookResult.Continue;
     }
     
-    private HookResult AddRoles() {
+    public void AddRoles() {
         var eligible = Utilities.GetPlayers()
             .Where(player => player.PawnIsAlive)
             .Where(player => player.IsReal())
@@ -91,7 +102,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     
         if (eligible.Count < 3) {
             _roundService.ForceEnd();
-            return HookResult.Stop;
+            return;
         }
 
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / Config.TTTConfig.TraitorRatio));
@@ -104,7 +115,7 @@ public class RoleManager : IRoleService, IPluginBehavior
             detectiveCount = MaxDetectives;
         }
         
-        for (var i = 0; i < traitorCount; i++) {
+        for (var i = 0; i < 1; i++) {
             var chosen = eligible[Random.Shared.Next(eligible.Count)];
             eligible.Remove(chosen); 
             AddTraitor(chosen);
@@ -118,7 +129,6 @@ public class RoleManager : IRoleService, IPluginBehavior
 
         AddInnocents(eligible);
         SetColors();
-        return HookResult.Continue;
     }
 
     public Dictionary<CCSPlayerController, Role> GetRoles()

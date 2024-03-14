@@ -1,2 +1,0 @@
-C:\Users\ducky\ttt\src\TTT\obj\Release\net8.0\TTT.csproj.AssemblyReference.cache
-C:\Users\ducky\ttt\src\TTT\obj\Release\net8.0\TTT.GeneratedMSBuildEditorConfig.editorconfig

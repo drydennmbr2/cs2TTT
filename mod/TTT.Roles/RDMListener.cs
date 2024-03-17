@@ -14,6 +14,11 @@ public class RDMListener : IPluginBehavior
         _roleService = roleService;
     }
 
+    public void Start(BasePlugin plugin)
+    {
+        
+    }
+
     [GameEventHandler]
     private HookResult OnPlayerKill(EventPlayerDeath @event, GameEventInfo info)
     {

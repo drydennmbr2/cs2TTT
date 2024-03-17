@@ -63,16 +63,9 @@ public class LogsListener : IPluginBehavior
     [GameEventHandler]
     private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
-        var players = Utilities.GetPlayers();
         var message = CreateMessage();
-
-        foreach (var player in players.Where(player => player.IsReal()))
-        {
-            Server.NextFrame(() =>
-            {
-                player.PrintToConsole(message);
-            });
-        }
+        
+        Server.PrintToConsole(message);
         
         _actions.Clear();
         

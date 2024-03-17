@@ -2,9 +2,6 @@
 using System.Drawing;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Mod.Role;
 using TTT.Public.Behaviors;
@@ -22,25 +19,35 @@ public class RoleManager : IRoleService, IPluginBehavior
     private const int MaxDetectives = 3;
     private int _traitorsLeft;
     private int _innocentsLeft;
-    private readonly BasePlugin _plugin;
     private readonly IRoundService _roundService;
 
-    public RoleManager(BasePlugin plugin, IRoundService roundService)
+    public RoleManager(IRoundService roundService)
     {
-        _plugin = plugin;
         _roundService = roundService;
     }
 
     public void Start(BasePlugin parent) {
-        parent.RegisterEventHandler<EventRoundStart>(OnRoundStart);
+        parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
         parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
+        parent.RegisterListener<Listeners.OnTick>(() =>
+        {
+            foreach (var value in _roles)
+            {
+                var player = value.Key;
+                var role = value.Value;
+
+                if (role == Role.Unassigned) continue;
+                
+                player.PrintToCenterHtml($"<img src='{GetRole(player).GetRoleUrl()}'>");
+            }
+        });
     }
     
     [GameEventHandler]
-    private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+    private HookResult OnRoundStart(EventRoundFreezeEnd @event, GameEventInfo info)
     {
         _roundService.SetRoundStatus(RoundStatus.Waiting);
         return HookResult.Continue;
@@ -48,7 +55,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     
 
     [GameEventHandler]
-    public HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
+    private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
     {
         _roundService.TickWaiting();
         return HookResult.Continue;
@@ -72,6 +79,8 @@ public class RoleManager : IRoleService, IPluginBehavior
         {
             _roundService.ForceEnd();
         }
+
+        target.VoiceFlags = VoiceFlags.Muted;
         
         return HookResult.Continue;
     }
@@ -80,8 +89,14 @@ public class RoleManager : IRoleService, IPluginBehavior
     private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
         _roundService.SetRoundStatus(RoundStatus.Waiting);
-        //get winners
-        //display winning team
+        var players = Utilities.GetPlayers()
+            .Where(player => player.IsValid).Where(player => player.IsReal()).ToList();
+
+        foreach (var player in players)
+        {
+            player.PrintToCenter(GetWinner().FormatStringFullAfter("s has won!"));
+        }
+        
         Clear();
         return HookResult.Continue;
     }
@@ -91,6 +106,14 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         _roles.Remove(@event.Userid);
 
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnPlayerHintMessage(EventPlayerHintmessage @event, GameEventInfo info)
+    {
+        
+        //unused
         return HookResult.Continue;
     }
     
@@ -186,6 +209,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public void Clear()
     {
+        RemoveColors();
         _roles.Clear();
     }
 
@@ -200,7 +224,20 @@ public class RoleManager : IRoleService, IPluginBehavior
                 ApplyTraitorColor(pair.Key);
         }
     }
-    
+
+    public void RemoveColors()
+    {
+        var players = Utilities.GetPlayers()
+            .Where(player => player.IsValid).ToList();
+
+        foreach (var player in players)
+        {
+            if (player.Pawn.Value == null) return;
+            player.Pawn.Value.RenderMode = RenderMode_t.kRenderNormal;
+            Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
+        }
+    }
+
     private void ApplyDetectiveColor(CCSPlayerController player)
     {
         if (!player.IsReal() || player.Pawn.Value == null)
@@ -216,16 +253,45 @@ public class RoleManager : IRoleService, IPluginBehavior
         if (!player.IsReal() || player.Pawn.Value == null)
             return;
         
-        player.Pawn.Value.RenderMode = RenderMode_t.kRenderTransColor;
+        player.Pawn.Value.RenderMode = RenderMode_t.kRenderGlow;
         player.Pawn.Value.Render = Color.Red;
         Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
         //apply for traitors only somehow?
     }
 
+    private void ApplyInnocentColor(CCSPlayerController player)
+    {
+        if (!player.IsReal() || player.Pawn.Value == null)
+            return;
+        
+        player.Pawn.Value.RenderMode = RenderMode_t.kRenderGlow;
+        player.Pawn.Value.Render = Color.Green;
+        Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
+    }
+
+    public void ApplyColorFromRole(CCSPlayerController player, Role role)
+    {
+        switch (role)
+        {
+            case Role.Traitor:
+                ApplyTraitorColor(player);
+                break;
+            case Role.Detective:
+                ApplyDetectiveColor(player);
+                break;
+            case Role.Innocent:
+                ApplyInnocentColor(player);
+                break;
+            case Role.Unassigned:
+            default:
+                break;
+        }
+    }
+
 
     private Role GetWinner()
     {
-        return Role.Detective;
+        return _traitorsLeft == 0 ? Role.Traitor : Role.Innocent;
     }
     
 }

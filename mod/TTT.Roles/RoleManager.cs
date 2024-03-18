@@ -57,6 +57,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
+        info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 

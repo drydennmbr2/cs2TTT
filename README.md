@@ -19,7 +19,8 @@ TTT is in heavy development and I want you to know that contributions are always
 - [ ] Distinguish Traitors
      - [ ] Needs a fix
 - [ ] Scoreboard
-- [ ] Localization
+- [ ] ~~Killfeed~~
+- [ ] ~~Localization~~
 - [ ] ~~Can't spawn in the middle of the round~~
 - [ ] ~~Early round rdm~~
 - [ ] ~~Logs~~

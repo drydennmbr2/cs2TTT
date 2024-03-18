@@ -11,16 +11,16 @@ TTT is in heavy development and I want you to know that contributions are always
 
 ## Base Release
 - [ ] ~~Team assignemnt~~
-- [ ] Bodies
-- [ ] Models on floor
-- [ ] ID models
-- [ ] Detective scan
+- [ ] ~~Models on floor~~
+- [ ] ~~ID models~~
+- [ ] ~~Detective scan~~
+     - [ ] Add states
 - [ ] ~~Tazer~~
 - [ ] Distinguish Traitors
      - [ ] Needs a fix
 - [ ] Scoreboard
 - [ ] Localization
-- [ ] Can't spawn in the middle of the round
+- [ ] ~~Can't spawn in the middle of the round~~
 - [ ] ~~Early round rdm~~
 - [ ] ~~Logs~~
 

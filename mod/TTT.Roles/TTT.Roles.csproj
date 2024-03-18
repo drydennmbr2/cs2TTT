@@ -9,6 +9,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj"/>
+        <ProjectReference Include="..\..\mod\TTT.Round\TTT.Round.csproj"/>
+
     </ItemGroup>
 
 </Project>

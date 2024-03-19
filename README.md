@@ -18,7 +18,7 @@ TTT is in heavy development and I want you to know that contributions are always
 - [ ] ~~Tazer~~
 - [ ] Distinguish Traitors
      - [ ] Needs a fix
-- [ ] Scoreboard
+- [ ] ~~Scoreboard~~
 - [ ] ~~Killfeed~~
 - [ ] ~~Localization~~
 - [ ] ~~Can't spawn in the middle of the round~~

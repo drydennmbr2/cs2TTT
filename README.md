@@ -29,3 +29,4 @@ TTT is in heavy development and I want you to know that contributions are always
 - [ ] Shop
 - [ ] Karma
 - [ ] RDM Manager
+- [ ] Add database support for logs and stats

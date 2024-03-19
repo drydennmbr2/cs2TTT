@@ -34,6 +34,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         {
             foreach (var player in from value in _roles let player = value.Key let role = value.Value where role != Role.Unassigned select player)
             {
+                player.ModifyScoreBoard();
                 player.PrintToCenterHtml($"<img src='{GetRole(player).GetRoleUrl()}'>");
             }
         });

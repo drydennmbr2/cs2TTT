@@ -9,6 +9,7 @@ using TTT.Public.Configuration;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Round;
+using TTT.Round;
 
 namespace TTT.Roles;
 
@@ -19,14 +20,11 @@ public class RoleManager : IRoleService, IPluginBehavior
     private const int MaxDetectives = 3;
     private int _traitorsLeft;
     private int _innocentsLeft;
-    private readonly IRoundService _roundService;
-
-    public RoleManager(IRoundService roundService)
+    private IRoundService _roundService;
+    
+    public void Start(BasePlugin parent)
     {
-        _roundService = roundService;
-    }
-
-    public void Start(BasePlugin parent) {
+        _roundService = new RoundManager(this, parent);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -34,13 +32,9 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
         parent.RegisterListener<Listeners.OnTick>(() =>
         {
-            foreach (var value in _roles)
+            foreach (var player in from value in _roles let player = value.Key let role = value.Value where role != Role.Unassigned select player)
             {
-                var player = value.Key;
-                var role = value.Value;
-
-                if (role == Role.Unassigned) continue;
-                
+                player.ModifyScoreBoard();
                 player.PrintToCenterHtml($"<img src='{GetRole(player).GetRoleUrl()}'>");
             }
         });
@@ -64,6 +58,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
+        info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 

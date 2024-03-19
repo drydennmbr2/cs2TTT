@@ -31,7 +31,7 @@ public class RDMListener : IPluginBehavior
 
         if (attackerRole == Role.Traitor && killedRole != Role.Traitor) return HookResult.Continue;
         
-        attacker.Health = 0;
+        attacker.CommitSuicide(false, true);
 
         return HookResult.Continue;
     }

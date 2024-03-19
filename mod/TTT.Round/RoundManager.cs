@@ -15,11 +15,24 @@ public class RoundManager : IRoundService
     private readonly IRoleService _roleService;
     private readonly BasePlugin _plugin;
     private const int GracePeriod = 0;
-
+    
     public RoundManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
         _plugin = plugin;
+        
+        VirtualFunctions.SwitchTeamFunc.Hook(hook =>
+        {
+            if (_roundStatus != RoundStatus.Started) return HookResult.Continue;
+            var playerPointer = hook.GetParam<nint>(0);
+            var player = new CCSPlayerController(playerPointer);
+            if (!player.IsValid) return HookResult.Continue;
+            if (!player.IsReal()) return HookResult.Continue;
+            
+            Server.NextFrame(() => player.CommitSuicide(false, true));
+            
+            return HookResult.Continue;
+        }, HookMode.Pre);
     }
 
     private RoundStatus _roundStatus = RoundStatus.Waiting;
@@ -61,7 +74,8 @@ public class RoundManager : IRoundService
                 .Where(player => player.IsValid)
                 .Where(player => player.IsReal())
                 .ToList();
-            if (timer == 0) AddGracePeriod();
+            
+            AddGracePeriod();
             
             foreach (var player in players)
             {
@@ -110,10 +124,14 @@ public class RoundManager : IRoundService
 
         foreach (var player in players)
         {
+            //buggy?
             var weapon = player.PlayerPawn.Value!.WeaponServices!.ActiveWeapon.Value!;
-            weapon.NextPrimaryAttackTick = (int)(GracePeriod * Server.CurrentTime);
+            weapon.NextPrimaryAttackTick = (int)(1 + Server.CurrentTime);
             Utilities.SetStateChanged(player, "CPlayer_WeaponServices", "m_hActiveWeapon");
         }
+        
+        //smth else?
+        //disable +use
     }
 
     private void RemoveGracePeriod()
@@ -129,10 +147,6 @@ public class RoundManager : IRoundService
             weapon.NextPrimaryAttackTick = (int)Server.CurrentTime;
             Utilities.SetStateChanged(player, "CBasePlayerWeapon", "m_nNextPrimaryAttackTick");
         }
-    }
-
-    private void AllowShooting(bool allow = false)
-    {
-        
+        //needed?
     }
 }

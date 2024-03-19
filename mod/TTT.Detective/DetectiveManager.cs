@@ -1,15 +1,12 @@
-﻿using System.Drawing;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Behaviors;
-using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Detective;
 using TTT.Public.Mod.Role;
-using TTT.Public.Formatting;
 
 namespace TTT.Detective;
 
@@ -32,15 +29,22 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     {
         var weapon = @event.Weapon;
         if (weapon != "weapon_taser") return HookResult.Continue;
-
+        var zeusWeapon = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
-
-        @event.DmgHealth = 0;
-        @event.DmgArmor = 0;
-            
+    
+        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
+        {
+            if (!zeusWeapon) return HookResult.Continue;
+            var damage = hook.GetParam<CTakeDamageInfo>(1);
+            damage.Damage = 0;
+            Utilities.SetStateChanged(target, "CTakeDamageInfo", "m_flDamage");
+            zeusWeapon = false;
+            return HookResult.Changed;
+        }, HookMode.Pre);
+        
         var targetRole = _roleService.GetRole(target);
         
         var pawn = attacker.PlayerPawn.Value;
@@ -71,6 +75,8 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
     private void IdentifyBody(CCSPlayerController caller)
     {
+        //add states
+        
         var entity = GetNearbyEntity(caller);
         
         if (entity == null) return;
@@ -92,8 +98,6 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             
         if (killerEntity is not CCSPlayerController killer) return;
         
-
-        //add states
         
         if (_roleService.GetRole(caller) == Role.Detective)
         {

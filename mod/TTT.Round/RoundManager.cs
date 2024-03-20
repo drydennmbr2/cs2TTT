@@ -75,7 +75,7 @@ public class RoundManager : IRoundService
                 .Where(player => player.IsReal())
                 .ToList();
             
-            AddGracePeriod();
+            //AddGracePeriod();
             
             foreach (var player in players)
             {

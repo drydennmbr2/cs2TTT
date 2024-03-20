@@ -1,5 +1,8 @@
 ﻿name: Release
 
+permissions:
+  contents: write
+
 on:
   push:
     branches-ignore:

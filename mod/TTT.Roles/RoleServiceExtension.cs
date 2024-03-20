@@ -10,5 +10,6 @@ public static class RoleServiceExtension
     {
         collection.AddPluginBehavior<IRoleService, RoleManager>();
         collection.AddPluginBehavior<LogsListener>();
+        collection.AddPluginBehavior<RDMListener>();
     }
 }

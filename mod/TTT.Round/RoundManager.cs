@@ -14,7 +14,7 @@ public class RoundManager : IRoundService
 
     private readonly IRoleService _roleService;
     private readonly BasePlugin _plugin;
-    private const int GracePeriod = 0;
+    private RoundStatus _roundStatus = RoundStatus.Paused;
     
     public RoundManager(IRoleService roleService, BasePlugin plugin)
     {
@@ -35,7 +35,6 @@ public class RoundManager : IRoundService
         }, HookMode.Pre);
     }
 
-    private RoundStatus _roundStatus = RoundStatus.Waiting;
     
     public RoundStatus GetRoundStatus()
     {
@@ -79,7 +78,8 @@ public class RoundManager : IRoundService
             
             foreach (var player in players)
             {
-                player.PrintToCenter($"Game is starting in: {15 - timer} seconds");
+                var timer1 = timer;
+                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {16 - timer1} seconds"));
             }
             
             timer++;
@@ -103,7 +103,7 @@ public class RoundManager : IRoundService
         {
             player.VoiceFlags = VoiceFlags.Normal;
         }
-        RemoveGracePeriod();
+        //RemoveGracePeriod();
         _roundStatus = RoundStatus.Started;
         _roleService.AddRoles();
     }
@@ -112,7 +112,6 @@ public class RoundManager : IRoundService
     {
         if (_roundStatus == RoundStatus.Ended) return;
         _roundStatus = RoundStatus.Ended;
-        VirtualFunctions.TerminateRound(1, RoundEndReason.Unknown, 2f, 2, 5);
     }
 
     private void AddGracePeriod()
@@ -127,7 +126,7 @@ public class RoundManager : IRoundService
             //buggy?
             var weapon = player.PlayerPawn.Value!.WeaponServices!.ActiveWeapon.Value!;
             weapon.NextPrimaryAttackTick = (int)(1 + Server.CurrentTime);
-            Utilities.SetStateChanged(player, "CPlayer_WeaponServices", "m_hActiveWeapon");
+            Utilities.SetStateChanged(player, "CBasePlayerWeapon", "m_nNextPrimaryAttackTick");
         }
         
         //smth else?

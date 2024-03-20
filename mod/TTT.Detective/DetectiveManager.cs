@@ -69,7 +69,9 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     [EntityOutputHook("*", "OnPlayerUse")]
     private HookResult OnUse(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
     {
-        IdentifyBody((CCSPlayerController)caller);
+        if (!(caller is CCSPlayerController player)) return HookResult.Continue;
+        player.PrintToChat("+use");
+        IdentifyBody(player);
         return HookResult.Continue;
     }
 

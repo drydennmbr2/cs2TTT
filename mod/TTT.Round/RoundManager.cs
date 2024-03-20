@@ -88,7 +88,7 @@ public class RoundManager : IRoundService
             
             ForceStart();
             
-            if (Utilities.GetPlayers().Where(player => player.IsReal()).ToList().Count < 3)
+            if (Utilities.GetPlayers().Where(player => player.IsReal()).ToList().Count <= 2)
             {
                 ForceEnd();
             }

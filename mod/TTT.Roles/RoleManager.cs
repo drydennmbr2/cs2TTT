@@ -116,7 +116,7 @@ public class RoleManager : IRoleService, IPluginBehavior
             return;
         }
 
-        var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / Config.TTTConfig.TraitorRatio));
+        var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 2));
         var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / Config.TTTConfig.DetectiveRatio));
 
         _traitorsLeft = traitorCount;

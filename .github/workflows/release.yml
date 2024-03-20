@@ -39,5 +39,5 @@ jobs:
         with:
           draft: true
           fail_on_unmatched_files: true
-          files: bin/Debug/net7.0//TTT.zip
+          files: build/TTT.zip
           body_path: .github/release_template.md

@@ -11,4 +11,11 @@
         <ProjectReference Include="..\..\mod\TTT.Detective\TTT.Detective.csproj"/>
         <ProjectReference Include="..\..\mod\TTT.Roles\TTT.Roles.csproj"/>
   </ItemGroup>
+
+    <Target Name="ZipOutputPath" AfterTargets="Publish">
+        <ZipDirectory
+                Overwrite="true"
+                SourceDirectory="$(PublishDir)\"
+                DestinationFile="$(PublishBaseDirectory)\TTT.zip" />
+    </Target>
 </Project>

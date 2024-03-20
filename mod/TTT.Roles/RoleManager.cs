@@ -133,7 +133,7 @@ public class RoleManager : IRoleService, IPluginBehavior
             detectiveCount = MaxDetectives;
         }
         
-        for (var i = 0; i < 1; i++) {
+        for (var i = 0; i < traitorCount; i++) {
             var chosen = eligible[Random.Shared.Next(eligible.Count)];
             eligible.Remove(chosen); 
             AddTraitor(chosen);
@@ -220,7 +220,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         }
     }
 
-    public void RemoveColors()
+    private void RemoveColors()
     {
         var players = Utilities.GetPlayers()
             .Where(player => player.IsValid).ToList();

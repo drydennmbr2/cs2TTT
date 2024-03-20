@@ -30,14 +30,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
         parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
-        parent.RegisterListener<Listeners.OnTick>(() =>
-        {
-            foreach (var player in from value in _roles let player = value.Key let role = value.Value where role != Role.Unassigned select player)
-            {
-                player.ModifyScoreBoard();
-                player.PrintToCenterHtml($"<img src='{GetRole(player).GetRoleUrl()}'>");
-            }
-        });
+        
     }
     
     [GameEventHandler]
@@ -205,7 +198,11 @@ public class RoleManager : IRoleService, IPluginBehavior
     public void Clear()
     {
         RemoveColors();
-        _roles.Clear();
+
+        foreach (var key in _roles.Keys.ToList())
+        {
+            _roles[key] = Role.Unassigned;
+        }
     }
 
     private void SetColors()
@@ -245,6 +242,8 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     private void ApplyTraitorColor(CCSPlayerController player)
     {
+        return; //quick fix for now
+        
         if (!player.IsReal() || player.Pawn.Value == null)
             return;
         

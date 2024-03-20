@@ -16,7 +16,7 @@ public class RDMListener : IPluginBehavior
 
     public void Start(BasePlugin plugin)
     {
-        
+        plugin.RegisterEventHandler<EventPlayerDeath>(OnPlayerKill);
     }
 
     [GameEventHandler]

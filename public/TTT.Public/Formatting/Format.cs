@@ -8,22 +8,22 @@ public static class Format
 {
     public static string FormatStringAfter(this Role role, string message)
     {
-        return FormatRole(role) + message;
+        return FormatRole(role) + ChatColors.Lime + message;
     }
 
     public static string FormatStringBefore(this Role role, string message)
     {
-        return message + " " + FormatRole(role);
+        return ChatColors.Lime + message + " " + FormatRole(role) + ChatColors.Lime;
     }
     
     public static string FormatStringFullAfter(this Role role, string message)
     {
-        return role.FormatRoleFull() + message;
+        return role.FormatRoleFull() + ChatColors.Lime + message;
     }
 
     public static string FormatStringFullBefore(this Role role, string message)
     {
-        return message + " " + role.FormatRoleFull();
+        return ChatColors.Lime + message + " " + role.FormatRoleFull() + ChatColors.Lime;
     }
 
     public static string FormatRole(this Role role)

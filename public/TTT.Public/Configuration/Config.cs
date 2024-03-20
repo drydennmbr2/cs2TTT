@@ -7,11 +7,8 @@ public class Config
 
     private static Config _config = new();
     
-    public static Config TTTConfig
-    {
-        get => _config;
-        set => _config = value;
-    }
+    public static Config TTTConfig => _config;
+    
     [JsonPropertyName("debug_mode")] public bool DebugMode { get; set; } = false;  // TODO: Switch to ConVar when supported
     [JsonPropertyName("grace_time")] public float GraceTime { get; set; } = 15;
     [JsonPropertyName("traitor_ratio")] public int TraitorRatio { get; set; } = 3;

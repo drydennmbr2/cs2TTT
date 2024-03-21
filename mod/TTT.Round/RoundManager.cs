@@ -100,9 +100,10 @@ public class RoundManager : IRoundService
                 {
                     ForceEnd();
                 }
+                timer = 15;
+
             }
-            timer = 15;
-        }, TimerFlags.STOP_ON_MAPCHANGE);
+        }, TimerFlags.STOP_ON_MAPCHANGE | TimerFlags.REPEAT);
     }
     
     public void ForceStart()

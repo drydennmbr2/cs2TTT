@@ -63,7 +63,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
-        if (attacker == null || target == null) return HookResult.Continue;
+        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         
         @event.Userid.PrintToChat($"You were killed by {GetRole(attacker).FormatStringAfter(attacker.PlayerName)}.");
         @event.Attacker.PrintToChat($"You killed {GetRole(target).FormatStringAfter(target.PlayerName)}.");
@@ -84,7 +84,6 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
-        _roundService.SetRoundStatus(RoundStatus.Waiting);
         var players = Utilities.GetPlayers()
             .Where(player => player.IsValid).Where(player => player.IsReal()).ToList();
 

@@ -66,15 +66,20 @@ public class RoundManager : IRoundService
 
     public void TickWaiting()
     {
-        
         var timer = Config.TTTConfig.GraceTime;
         _plugin.AddTimer(1f, () =>
         {
-            if (_roundStatus != RoundStatus.Waiting) return;
             var players = Utilities.GetPlayers()
                 .Where(player => player.IsValid)
                 .Where(player => player.IsReal())
                 .ToList();
+
+            foreach (var player in players)
+            {
+                player.PrintToChat(_roundStatus.ToString());
+            }
+            if (_roundStatus != RoundStatus.Waiting) return;
+            
             
             //AddGracePeriod();
             

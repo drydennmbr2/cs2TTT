@@ -66,6 +66,11 @@ public class LogsListener : IPluginBehavior
         var message = CreateMessage();
         
         Server.PrintToConsole(message);
+
+        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid).Where(player => player.IsReal()).ToList())
+        {
+            player.PrintToConsole(message);
+        }
         
         _actions.Clear();
         

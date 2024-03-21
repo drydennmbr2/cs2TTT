@@ -51,7 +51,6 @@ public class RoundManager : IRoundService
                 ForceEnd();
                 break;
             case RoundStatus.Waiting:
-                TickWaiting();
                 break;
             case RoundStatus.Started:
                 ForceStart();

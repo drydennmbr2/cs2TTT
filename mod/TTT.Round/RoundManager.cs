@@ -81,21 +81,21 @@ public class RoundManager : IRoundService
             foreach (var player in players)
             {
                 var timer1 = timer;
-                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {timer1} seconds"));
+                Server.NextFrame(() => player.PrintToChat($"Game is starting in: {timer1} seconds"));
                 
             }
             
             timer--;
-            
-            if (timer != 0) return;
-            
-            ForceStart();
-            
-            if (Utilities.GetPlayers().Where(player => player.IsReal()).ToList().Count <= 2)
+
+            if (timer == 0)
             {
-                ForceEnd();
-            }
+                ForceStart();
             
+                if (Utilities.GetPlayers().Where(player => player.IsReal()).ToList().Count <= 2)
+                {
+                    ForceEnd();
+                }
+            }
             timer = 15;
         }, TimerFlags.STOP_ON_MAPCHANGE);
     }

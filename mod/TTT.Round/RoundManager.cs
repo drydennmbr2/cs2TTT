@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Timers;
+using TTT.Public.Configuration;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
@@ -65,7 +66,7 @@ public class RoundManager : IRoundService
 
     public void TickWaiting()
     {
-        var timer = 0;
+        var timer = Config.TTTConfig.GraceTime;
         _plugin.AddTimer(1f, () =>
         {
             if (_roundStatus != RoundStatus.Waiting) return;
@@ -79,12 +80,13 @@ public class RoundManager : IRoundService
             foreach (var player in players)
             {
                 var timer1 = timer;
-                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {16 - timer1} seconds"));
+                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {timer1} seconds"));
+                
             }
             
-            timer++;
+            timer--;
             
-            if (timer != 15) return;
+            if (timer != 0) return;
             
             ForceStart();
             
@@ -93,7 +95,7 @@ public class RoundManager : IRoundService
                 ForceEnd();
             }
             
-            timer = 0;
+            timer = 15;
         }, TimerFlags.STOP_ON_MAPCHANGE);
     }
     
@@ -125,7 +127,7 @@ public class RoundManager : IRoundService
         {
             //buggy?
             var weapon = player.PlayerPawn.Value!.WeaponServices!.ActiveWeapon.Value!;
-            weapon.NextPrimaryAttackTick = (int)(1 + Server.CurrentTime);
+            weapon.NextPrimaryAttackTick = (int)(2 + Server.CurrentTime);
             Utilities.SetStateChanged(player, "CBasePlayerWeapon", "m_nNextPrimaryAttackTick");
         }
         

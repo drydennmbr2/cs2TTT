@@ -30,6 +30,8 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
         parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
+        parent.RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
+
         
     }
     
@@ -40,6 +42,12 @@ public class RoleManager : IRoleService, IPluginBehavior
         return HookResult.Continue;
     }
     
+    [GameEventHandler]
+    private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
+    {
+        _roles.Add(@event.Userid, Role.Unassigned);
+        return HookResult.Continue;
+    } 
 
     [GameEventHandler]
     private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
@@ -242,8 +250,6 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     private void ApplyTraitorColor(CCSPlayerController player)
     {
-        return; //quick fix for now
-        
         if (!player.IsReal() || player.Pawn.Value == null)
             return;
         

@@ -66,6 +66,7 @@ public class RoundManager : IRoundService
 
     public void TickWaiting()
     {
+        
         var timer = Config.TTTConfig.GraceTime;
         _plugin.AddTimer(1f, () =>
         {

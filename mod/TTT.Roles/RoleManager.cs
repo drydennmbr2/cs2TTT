@@ -108,7 +108,6 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerHintMessage(EventPlayerHintmessage @event, GameEventInfo info)
     {
-        
         //unused
         return HookResult.Continue;
     }

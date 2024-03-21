@@ -67,17 +67,12 @@ public class RoundManager : IRoundService
     public void TickWaiting()
     {
         var timer = Config.TTTConfig.GraceTime;
-        _plugin.AddTimer(1f, () =>
+        _plugin.AddTimer(64f, () =>
         {
             var players = Utilities.GetPlayers()
                 .Where(player => player.IsValid)
                 .Where(player => player.IsReal())
                 .ToList();
-
-            foreach (var player in players)
-            {
-                player.PrintToChat(_roundStatus.ToString());
-            }
             if (_roundStatus != RoundStatus.Waiting) return;
             
             
@@ -87,7 +82,6 @@ public class RoundManager : IRoundService
             {
                 var timer1 = timer;
                 Server.NextFrame(() => player.PrintToChat($"Game is starting in: {timer1} seconds"));
-                
             }
             
             timer--;
@@ -120,6 +114,7 @@ public class RoundManager : IRoundService
     public void ForceEnd()
     {
         if (_roundStatus == RoundStatus.Ended) return;
+        
         _roundStatus = RoundStatus.Ended;
     }
 

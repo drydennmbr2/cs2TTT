@@ -83,7 +83,6 @@ public class RoundManager : IRoundService
 
             _round.Start();
 
-            if (Utilities.GetPlayers().Where(player => player.IsReal()).ToList().Count <= 2) ForceEnd();
         }, TimerFlags.STOP_ON_MAPCHANGE | TimerFlags.REPEAT);
     }
 

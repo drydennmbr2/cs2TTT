@@ -150,6 +150,8 @@ public class RoleManager : IRoleService, IPluginBehavior
     private HookResult OnRoundStart(EventRoundFreezeEnd @event, GameEventInfo info)
     {
         _roundService.SetRoundStatus(RoundStatus.Waiting);
+        Server.PrintToChatAll("Testing");
+
         return HookResult.Continue;
     }
 
@@ -157,6 +159,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
     {
         _roles.Add(@event.Userid, Role.Unassigned);
+        Server.PrintToChatAll("Testing");
         return HookResult.Continue;
     }
 

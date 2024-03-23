@@ -107,7 +107,7 @@ public class RoundManager : IRoundService
         if (_roundStatus == RoundStatus.Ended) return;
         _roundStatus = RoundStatus.Ended;
         _round = new Round(_roleService, 1);
-        VirtualFunctions.TerminateRound(0, RoundEndReason.Unknown, 0, 0, 0);
+        Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(0, RoundEndReason.Unknown);
     }
 
     private void AddGracePeriod()

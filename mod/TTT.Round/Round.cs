@@ -41,7 +41,6 @@ public class Round
     public void Start()
     {
         Server.PrintToChatAll($"{ChatColors.Yellow}[TTT] A new round has started!");
-        
         _roleService.AddRoles();
     }
 }

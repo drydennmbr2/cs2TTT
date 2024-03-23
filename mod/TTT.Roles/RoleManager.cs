@@ -41,12 +41,6 @@ public class RoleManager : IRoleService, IPluginBehavior
             .Where(player => player.IsReal())
             .ToList();
 
-        if (eligible.Count < 3)
-        {
-            _roundService.ForceEnd();
-            return;
-        }
-
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 2));
         var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / Config.TTTConfig.DetectiveRatio));
 

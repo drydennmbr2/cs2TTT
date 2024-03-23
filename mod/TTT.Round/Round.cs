@@ -26,11 +26,10 @@ public class Round
             .Where(player => player.IsReal())
             .ToList();
         
-        var formattedColor = $"<font color=\"#{Color.Yellow.R:X2}{Color.Yellow.G:X2}{Color.Yellow.B:X2}\">";
 
         foreach (var player in players)
         {
-            Server.NextFrame(() => player.PrintToCenterHtml($"{formattedColor}<b>[TTT] Game is starting in {_graceTime--} seconds</b></font>"));
+            Server.NextFrame(() => player.PrintToChat($"{ChatColors.Yellow}[TTT] Game is starting in {_graceTime--} seconds"));
         }
     }
 

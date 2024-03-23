@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
 
 namespace TTT.Public.Action;

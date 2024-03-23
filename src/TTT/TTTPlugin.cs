@@ -3,25 +3,24 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.Public.Behaviors;
-using TTT.Public.Configuration;
 
 namespace TTT;
 
 public class TTTPlugin : BasePlugin
 {
-    private IReadOnlyList<IPluginBehavior>? _extensions;
     private readonly IServiceProvider _provider;
+    private IReadOnlyList<IPluginBehavior>? _extensions;
     private IServiceScope? _scope;
 
     /// <summary>
-    /// The TTT plugin.
+    ///     The TTT plugin.
     /// </summary>
     /// <param name="provider"></param>
     public TTTPlugin(IServiceProvider provider)
     {
         _provider = provider;
     }
-    
+
     /// <inheritdoc />
     public override string ModuleName => "TTT";
 

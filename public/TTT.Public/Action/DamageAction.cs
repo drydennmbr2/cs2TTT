@@ -6,18 +6,18 @@ namespace TTT.Public.Action;
 
 public class DamageAction : IAction
 {
-
-    private readonly Tuple<CCSPlayerController, Role>  _actor;
-    private readonly Tuple<CCSPlayerController, Role>  _attackedPlayer;
+    private readonly Tuple<CCSPlayerController, Role> _actor;
+    private readonly Tuple<CCSPlayerController, Role> _attackedPlayer;
     private readonly int _damage;
 
-    public DamageAction(Tuple<CCSPlayerController, Role> actor, Tuple<CCSPlayerController, Role>  attackedPlayer, int damage, int roundTime)
+    public DamageAction(Tuple<CCSPlayerController, Role> actor, Tuple<CCSPlayerController, Role> attackedPlayer,
+        int damage, int roundTime)
     {
         _actor = actor;
         _attackedPlayer = attackedPlayer;
         _damage = damage;
     }
-    
+
     public CCSPlayerController Actor()
     {
         return _actor.Item1;

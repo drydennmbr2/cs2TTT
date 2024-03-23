@@ -26,14 +26,14 @@ public class RDMListener : IPluginBehavior
         var killedPlayer = @event.Userid;
 
         if (!attacker.IsValid) return HookResult.Continue;
-        
+
         var attackerRole = _roleService.GetRole(attacker);
         var killedRole = _roleService.GetRole(killedPlayer);
 
         if (killedPlayer == null || attacker == null) return HookResult.Continue;
 
         if (attackerRole == Role.Traitor && killedRole != Role.Traitor) return HookResult.Continue;
-        
+
         attacker.CommitSuicide(false, true);
 
         return HookResult.Continue;

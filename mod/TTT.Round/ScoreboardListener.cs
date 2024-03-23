@@ -1,5 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 
 namespace TTT.Round;
 
@@ -17,7 +17,6 @@ public static class ScoreboardListener
         RemoveDeaths(player);
         RemoveAssists(player);
         RemoveAdvancedScore(player);
-        
     }
 
     private static void RemoveKills(CCSPlayerController player)
@@ -26,7 +25,7 @@ public static class ScoreboardListener
         matchStats.Kills = 0;
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iKills");
     }
-    
+
     private static void RemoveDamage(CCSPlayerController player)
     {
         var matchStats = player.ActionTrackingServices!.MatchStats;
@@ -35,14 +34,14 @@ public static class ScoreboardListener
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iUtilityDamage");
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iDamage");
     }
-    
+
     private static void RemoveDeaths(CCSPlayerController player)
     {
         var matchStats = player.ActionTrackingServices!.MatchStats;
         matchStats.Deaths = 0;
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iDeaths");
     }
-    
+
     private static void RemoveAssists(CCSPlayerController player)
     {
         var matchStats = player.ActionTrackingServices!.MatchStats;

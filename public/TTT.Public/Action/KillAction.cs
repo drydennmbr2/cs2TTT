@@ -6,16 +6,15 @@ namespace TTT.Public.Action;
 
 public class KillAction : IAction
 {
+    private readonly Tuple<CCSPlayerController, Role> _actor;
+    private readonly Tuple<CCSPlayerController, Role> _attackedPlayer;
 
-    private readonly Tuple<CCSPlayerController, Role>  _actor;
-    private readonly Tuple<CCSPlayerController, Role>  _attackedPlayer;
-
-    public KillAction(Tuple<CCSPlayerController, Role> actor, Tuple<CCSPlayerController, Role>  attackedPlayer)
+    public KillAction(Tuple<CCSPlayerController, Role> actor, Tuple<CCSPlayerController, Role> attackedPlayer)
     {
         _actor = actor;
         _attackedPlayer = attackedPlayer;
     }
-    
+
     public CCSPlayerController Actor()
     {
         return _actor.Item1;

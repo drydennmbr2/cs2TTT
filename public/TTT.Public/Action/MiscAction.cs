@@ -20,6 +20,6 @@ public class MiscAction : IAction
 
     public string ActionMessage()
     {
-        return this._action;
+        return _action;
     }
 }

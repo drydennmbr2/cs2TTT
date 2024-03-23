@@ -43,7 +43,7 @@ public class InfoManager
                 var playerRole = _roleService.GetRole(player);
                 player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.GetRoleUrl()}'>");
                 if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
-                
+
                 if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
                 {
                     player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.GetRoleUrl()}'>");
@@ -51,9 +51,7 @@ public class InfoManager
                 }
 
                 if (playerRole == Role.Innocent)
-                {
                     player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.GetRoleUrl()}'>");
-                }
             }
         });
     }

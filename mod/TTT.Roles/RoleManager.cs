@@ -25,6 +25,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         _roundService = new RoundManager(this, parent);
+        _roundService.TickWaiting();
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -166,7 +167,6 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
     {
-        _roundService.TickWaiting();
         return HookResult.Continue;
     }
 

@@ -21,7 +21,7 @@ public class RoundManager : IRoundService
     {
         _roleService = roleService;
         _plugin = plugin;
-
+        /**
         VirtualFunctions.SwitchTeamFunc.Hook(hook =>
         {
             if (_roundStatus != RoundStatus.Started) return HookResult.Continue;
@@ -34,6 +34,7 @@ public class RoundManager : IRoundService
 
             return HookResult.Continue;
         }, HookMode.Pre);
+        */
     }
 
 

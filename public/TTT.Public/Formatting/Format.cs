@@ -17,7 +17,7 @@ public static class Format
 
     public static string FormatStringFullAfter(this Role role, string message)
     {
-        return role.FormatRoleFull() + ChatColors.Lime + message;
+        return role.FormatRoleFull() + " " +  ChatColors.Lime + message;
     }
 
     public static string FormatStringFullBefore(this Role role, string message)

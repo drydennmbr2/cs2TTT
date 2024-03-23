@@ -80,6 +80,7 @@ public class RoundManager : IRoundService
 
             if (_round.GraceTime() != 0) return;
 
+            _roundStatus = RoundStatus.Started;
             _round.Start();
 
         }, TimerFlags.STOP_ON_MAPCHANGE | TimerFlags.REPEAT);

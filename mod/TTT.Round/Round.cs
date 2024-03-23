@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API;
+﻿using System.Drawing;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Configuration;
 using TTT.Public.Extensions;
@@ -25,8 +26,12 @@ public class Round
             .Where(player => player.IsReal())
             .ToList();
         
+        var formattedColor = $"<font color=\"#{Color.Yellow.R:X2}{Color.Yellow.G:X2}{Color.Yellow.B:X2}\">";
+
         foreach (var player in players)
-            Server.NextFrame(() => player.PrintToCenter($"{ChatColors.Yellow}[TTT] Game is starting in {_graceTime--} seconds"));
+        {
+            Server.NextFrame(() => player.PrintToCenterHtml($"{formattedColor}<b>[TTT] Game is starting in {_graceTime--} seconds</b></font>"));
+        }
     }
 
     public float GraceTime()

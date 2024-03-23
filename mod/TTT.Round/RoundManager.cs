@@ -21,7 +21,6 @@ public class RoundManager : IRoundService
     {
         _roleService = roleService;
         _plugin = plugin;
-        _round = new Round(roleService, 1);
 
         VirtualFunctions.SwitchTeamFunc.Hook(hook =>
         {

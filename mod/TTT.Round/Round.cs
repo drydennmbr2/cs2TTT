@@ -29,7 +29,7 @@ public class Round
 
         foreach (var player in players)
         {
-            Server.NextFrame(() => player.PrintToChat($"{ChatColors.Yellow}[TTT] Game is starting in {_graceTime--} seconds"));
+            Server.NextFrame(() => player.PrintToChat(ChatColors.Yellow + $"[TTT] Game is starting in {_graceTime--} seconds"));
         }
     }
 

@@ -68,7 +68,6 @@ public class RoundManager : IRoundService
     {
         _plugin.AddTimer(1f, () =>
         {
-            Server.PrintToChatAll(_roundStatus.ToString());
             if (_round == null)
             {
                 _round = new Round(_roleService, 1);

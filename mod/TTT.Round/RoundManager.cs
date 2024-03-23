@@ -69,20 +69,14 @@ public class RoundManager : IRoundService
     {
         _plugin.AddTimer(1f, () =>
         {
-            if (_round == null) return;
-
-            if (_roundStatus != RoundStatus.Waiting) return;
-
-            var players = Utilities.GetPlayers()
-                .Where(player => player.IsValid)
-                .Where(player => player.IsReal())
-                .ToList();
+            if (_round == null)
+            {
+                _round = new Round(_roleService, 1);
+                return;
+            }
             
-            //AddGracePeriod();
-
-            foreach (var player in players)
-                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {_round.GraceTime()} seconds"));
-
+            if (_roundStatus != RoundStatus.Waiting) return;
+            
             _round.Tick();
 
             if (_round.GraceTime() != 0) return;
@@ -107,7 +101,7 @@ public class RoundManager : IRoundService
         if (_roundStatus == RoundStatus.Ended) return;
         _roundStatus = RoundStatus.Ended;
         _round = new Round(_roleService, 1);
-        Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(0, RoundEndReason.Unknown);
+        Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(1, RoundEndReason.Unknown);
     }
 
     private void AddGracePeriod()

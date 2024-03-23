@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Configuration;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
@@ -19,7 +20,13 @@ public class Round
 
     public void Tick()
     {
-        _graceTime--;
+        var players = Utilities.GetPlayers()
+            .Where(player => player.IsValid)
+            .Where(player => player.IsReal())
+            .ToList();
+        
+        foreach (var player in players)
+            Server.NextFrame(() => player.PrintToCenter($"{ChatColors.Yellow}[TTT] Game is starting in {_graceTime--} seconds"));
     }
 
     public float GraceTime()
@@ -29,7 +36,7 @@ public class Round
 
     public void Start()
     {
-        Server.PrintToChatAll("[TTT] A new round has started!");
+        Server.PrintToChatAll($"{ChatColors.Yellow}[TTT] A new round has started!");
         
         _roleService.AddRoles();
     }

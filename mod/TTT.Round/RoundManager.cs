@@ -77,12 +77,11 @@ public class RoundManager : IRoundService
                 .Where(player => player.IsValid)
                 .Where(player => player.IsReal())
                 .ToList();
-
-
+            
             //AddGracePeriod();
 
             foreach (var player in players)
-                Server.NextFrame(() => player.PrintToChat($"Game is starting in: {_round.GraceTime()} seconds"));
+                Server.NextFrame(() => player.PrintToCenter($"Game is starting in: {_round.GraceTime()} seconds"));
 
             _round.Tick();
 

@@ -149,8 +149,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnRoundStart(EventRoundFreezeEnd @event, GameEventInfo info)
     {
-        AddRoles();
-        //_roundService.SetRoundStatus(RoundStatus.Waiting);
+        _roundService.SetRoundStatus(RoundStatus.Waiting);
         return HookResult.Continue;
     }
 
@@ -164,7 +163,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
     {
-        //_roundService.TickWaiting();
+        _roundService.TickWaiting();
         return HookResult.Continue;
     }
 

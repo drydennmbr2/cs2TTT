@@ -1,4 +1,6 @@
-﻿using TTT.Public.Configuration;
+﻿using CounterStrikeSharp.API;
+using TTT.Public.Configuration;
+using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
 
 namespace TTT.Round;
@@ -27,6 +29,8 @@ public class Round
 
     public void Start()
     {
+        Server.PrintToChatAll("[TTT] A new round has started!");
+        
         _roleService.AddRoles();
     }
 }

@@ -79,7 +79,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public void AddTraitor(CCSPlayerController player)
     {
-        _roles.Add(player, Role.Traitor);
+        _roles[player] = Role.Traitor;
         player.SwitchTeam(CsTeam.Terrorist);
         player.PrintToCenter(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
         player.PrintToChat(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
@@ -87,7 +87,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public void AddDetective(CCSPlayerController player)
     {
-        _roles.Add(player, Role.Detective);
+        _roles[player] = Role.Detective;
         player.SwitchTeam(CsTeam.CounterTerrorist);
         player.PrintToChat(Role.Detective.FormatStringFullBefore("You are now a(n)"));
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
@@ -98,7 +98,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         foreach (var player in players)
         {
-            _roles.Add(player, Role.Innocent);
+            _roles[player] = Role.Innocent;
             player.PrintToChat(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.SwitchTeam(CsTeam.Terrorist);

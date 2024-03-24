@@ -25,12 +25,13 @@ public class Round
             .Where(player => player.IsValid)
             .Where(player => player.IsReal())
             .ToList();
-        
 
         foreach (var player in players)
         {
-            Server.NextFrame(() => player.PrintToChat(ChatColors.Yellow + $"[TTT] Game is starting in {_graceTime--} seconds"));
+            Server.NextFrame(() => player.PrintToChat(ChatColors.Yellow + $"[TTT] Game is starting in {_graceTime} seconds"));
         }
+
+        _graceTime--;
     }
 
     public float GraceTime()

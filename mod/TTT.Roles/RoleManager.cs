@@ -161,6 +161,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
     {
+        _roles.Clear();
         return HookResult.Continue;
     }
 

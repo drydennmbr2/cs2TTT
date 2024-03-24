@@ -47,7 +47,7 @@ public class LogsListener : IPluginBehavior
         var deadPlayer = @event.Userid;
         var damage = @event.DmgHealth;
 
-        if (killer == null || deadPlayer == null) return HookResult.Continue;
+        if (!killer.IsValid || !deadPlayer.IsValid) return HookResult.Continue;
 
         //var hitbox = @event.Hitgroup; wip
 

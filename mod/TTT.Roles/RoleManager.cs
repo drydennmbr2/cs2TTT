@@ -239,6 +239,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         {
             if (player.Pawn.Value == null) return;
             player.Pawn.Value.RenderMode = RenderMode_t.kRenderNormal;
+            player.Pawn.Value.Render = Color.Empty;
             Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
         }
     }

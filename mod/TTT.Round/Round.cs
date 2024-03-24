@@ -28,7 +28,7 @@ public class Round
 
         foreach (var player in players)
         {
-            Server.NextFrame(() => player.PrintToChat(ChatColors.Yellow + $"[TTT] Game is starting in {_graceTime} seconds"));
+            Server.NextFrame(() => player.PrintToChat("" + ChatColors.Yellow + $"[TTT] Game is starting in {_graceTime} seconds"));
         }
 
         _graceTime--;
@@ -41,7 +41,7 @@ public class Round
 
     public void Start()
     {
-        Server.PrintToChatAll($"{ChatColors.Yellow}[TTT] A new round has started!");
+        Server.PrintToChatAll("" + $"{ChatColors.Yellow}[TTT] A new round has started!");
         _roleService.AddRoles();
     }
 }

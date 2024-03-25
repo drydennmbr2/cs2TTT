@@ -114,7 +114,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
                 $"[TTT] {controllerRole.FormatStringFullBefore(controller.PlayerName)} was killed by {_roleService.GetRole(killer).FormatStringFullBefore(killer.PlayerName)}");
     }
 
-    private CRagdollProp? GetNearbyEntity(CCSPlayerController player)
+    private CRagdollProp? GetNearbyEntity(CBaseEntity player)
     {
         var entities = Utilities
             .GetAllEntities()

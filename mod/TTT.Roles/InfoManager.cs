@@ -36,12 +36,14 @@ public class InfoManager
             foreach (var player in from value in _roleService.GetRoles()
                      let player = value.Key
                      let role = value.Value
-                     where role != Role.Unassigned
                      select player)
             {
                 player.ModifyScoreBoard();
                 var playerRole = _roleService.GetRole(player);
+                if (playerRole == Role.Unassigned) return;
+                
                 player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.GetRoleUrl()}'>");
+                
                 if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
 
                 if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)

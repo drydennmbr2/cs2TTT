@@ -9,7 +9,6 @@ public static class RoleServiceExtension
     public static void AddTTTRoles(this IServiceCollection collection)
     {
         collection.AddPluginBehavior<IRoleService, RoleManager>();
-        collection.AddPluginBehavior<LogsListener>();
         collection.AddPluginBehavior<RDMListener>();
     }
 }

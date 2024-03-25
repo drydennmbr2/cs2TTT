@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Behaviors;
+using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Detective;
 using TTT.Public.Mod.Role;
@@ -22,6 +23,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerShoot);
+        parent.RegisterListener<Listeners.OnTick>(OnPlayerUse);
     }
 
 
@@ -67,14 +69,14 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         return HookResult.Changed;
     }
 
-    [EntityOutputHook("*", "OnPlayerUse")]
-    private HookResult OnUse(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller,
-        CVariant value, float delay)
+    private void OnPlayerUse()
     {
-        if (caller is not CCSPlayerController player) return HookResult.Continue;
-        player.PrintToChat("+use");
-        IdentifyBody(player);
-        return HookResult.Continue;
+        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid).Where(player => player.IsReal()))
+        {
+            if ((player.Buttons & PlayerButtons.Use) == 0) continue;
+            player.PrintToChat("+use");
+            IdentifyBody(player);   
+        }
     }
 
     private void IdentifyBody(CCSPlayerController caller)
@@ -87,8 +89,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
         var killerEntity = entity.Killer.Value;
 
-        if (entity.RagdollSource.Value! is not CCSPlayerController controller) return;
+        if (entity.RagdollSource.Value! is not CCSPlayerController) return;
 
+        var controller = entity.RagdollSource.Value.As<CCSPlayerController>();
+        
         var controllerRole = _roleService.GetRole(controller);
 
         if (killerEntity == null)

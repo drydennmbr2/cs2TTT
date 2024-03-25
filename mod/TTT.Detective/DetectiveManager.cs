@@ -23,7 +23,12 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerShoot);
-        parent.RegisterListener<Listeners.OnTick>(OnPlayerUse);
+        parent.AddCommandListener("OnPlayerUse", (player, info) =>
+        {
+            if (player == null || !player.IsValid || !player.IsReal()) return HookResult.Continue;
+            OnPlayerUse(player);
+            return HookResult.Continue;
+        }, HookMode.Pre);
     }
 
 
@@ -69,14 +74,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         return HookResult.Changed;
     }
 
-    private void OnPlayerUse()
+    private void OnPlayerUse(CCSPlayerController player)
     {
-        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid).Where(player => player.IsReal()))
-        {
-            if ((player.Buttons & PlayerButtons.Use) == 0) continue;
-            player.PrintToChat("+use");
-            IdentifyBody(player);   
-        }
+        player.PrintToChat("+use");
+        IdentifyBody(player);   
     }
 
     private void IdentifyBody(CCSPlayerController caller)

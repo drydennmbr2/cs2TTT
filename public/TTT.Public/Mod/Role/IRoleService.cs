@@ -7,6 +7,9 @@ public interface IRoleService
     Dictionary<CCSPlayerController, Role> GetRoles();
     Role GetRole(CCSPlayerController player);
     void AddRoles();
+    ISet<CCSPlayerController> GetTraitors();
+    ISet<CCSPlayerController> GetDetectives();
+    ISet<CCSPlayerController> GetInnocents();
     bool IsDetective(CCSPlayerController player);
     bool IsTraitor(CCSPlayerController player);
     void AddDetective(CCSPlayerController player);

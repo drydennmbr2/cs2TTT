@@ -21,11 +21,12 @@ public class RoleManager : IRoleService, IPluginBehavior
     private int _innocentsLeft;
     private IRoundService _roundService;
     private int _traitorsLeft;
+    private InfoManager _infoManager;
 
     public void Start(BasePlugin parent)
     {
         _roundService = new RoundManager(this, parent);
-        new InfoManager(this, parent);
+        _infoManager = new InfoManager(this, parent);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -66,6 +67,21 @@ public class RoleManager : IRoleService, IPluginBehavior
 
         AddInnocents(eligible);
         SetColors();
+    }
+
+    public ISet<CCSPlayerController> GetTraitors()
+    {
+        return _roles.Keys.Where(player => GetRole(player) == Role.Traitor).ToHashSet();
+    }
+
+    public ISet<CCSPlayerController> GetDetectives()
+    {
+        return _roles.Keys.Where(player => GetRole(player) == Role.Detective).ToHashSet();
+    }
+
+    public ISet<CCSPlayerController> GetInnocents()
+    {
+        return _roles.Keys.Where(player => GetRole(player) == Role.Innocent).ToHashSet();
     }
 
     public Dictionary<CCSPlayerController, Role> GetRoles()
@@ -273,4 +289,6 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         return _traitorsLeft == 0 ? Role.Traitor : Role.Innocent;
     }
+    
+    
 }

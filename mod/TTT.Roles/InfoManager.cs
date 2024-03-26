@@ -42,18 +42,18 @@ public class InfoManager
                 var playerRole = _roleService.GetRole(player);
                 if (playerRole == Role.Unassigned) return;
                 
-                player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.GetRoleUrl()}'>");
+                player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.FormatRoleFull()}'>");
                 
                 if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
 
                 if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
                 {
-                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.GetRoleUrl()}'>");
+                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.FormatRoleFull()}'>");
                     continue;
                 }
 
                 if (playerRole == Role.Innocent)
-                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.GetRoleUrl()}'>");
+                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.FormatRoleFull()}'>");
             }
         });
     }

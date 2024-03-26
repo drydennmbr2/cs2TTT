@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
+using System.Text;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Configuration;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
+using TTT.Public.Formatting;
 
 namespace TTT.Round;
 
@@ -19,6 +21,7 @@ public class Round
 
     public void Tick()
     {
+        _graceTime--;
         if (_graceTime % 64 != 0) return;
         
         var players = Utilities.GetPlayers()
@@ -33,11 +36,9 @@ public class Round
             Server.NextFrame(() =>
             {
                 player.PrintToCenterHtml(
-                    $"{formattedColor}<b>[TTT] Game is starting in {_graceTime / 64} seconds</b></font>");
+                    $"{formattedColor}<b>[TTT] Game is starting in {Math.Floor(_graceTime / 64)} seconds</b></font>");
             });
         }
-
-        _graceTime -= 64;
     }
 
     public float GraceTime()
@@ -47,8 +48,45 @@ public class Round
 
     public void Start()
     {
-        Server.PrintToChatAll("" + $"{ChatColors.Yellow}[TTT] A new round has started!");
+        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid))
+        { 
+            player.PrintToChat(StringUtils.FormatTTT("A new round has started!"));
+        }
+        SendTraitorMessage();
+        SendDetectiveMessage();
         //get teammates
         _roleService.AddRoles();
+    }
+
+    private void SendTraitorMessage()
+    {
+        StringBuilder message = new();
+        message.AppendLine(StringUtils.FormatTTT("Your teammates:"));
+        var traitors = _roleService.GetTraitors();
+        foreach (var traitor in traitors)
+        {
+            message.AppendLine(StringUtils.FormatTTT(Role.Traitor.FormatStringFullAfter(traitor.PlayerName)));
+        }
+
+        foreach (var player in traitors)
+        {
+            Server.NextFrame(() => player.PrintToChat(message.ToString()));
+        }
+    }
+
+    private void SendDetectiveMessage()
+    {
+        StringBuilder message = new();
+        message.AppendLine(StringUtils.FormatTTT("Your teammates:"));
+        var detectives = _roleService.GetDetectives();
+        foreach (var detective in detectives)
+        {
+            message.AppendLine(StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(detective.PlayerName)));
+        }
+
+        foreach (var player in detectives)
+        {
+            Server.NextFrame(() => player.PrintToChat(message.ToString()));
+        }
     }
 }

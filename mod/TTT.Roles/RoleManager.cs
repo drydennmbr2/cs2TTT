@@ -35,6 +35,68 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
     }
 
+    [GameEventHandler]
+    private HookResult OnRoundStart(EventRoundFreezeEnd @event, GameEventInfo info)
+    {
+        _roundService.SetRoundStatus(RoundStatus.Waiting);
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
+    {
+        _roles.TryAdd(@event.Userid, Role.Unassigned);
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
+    {
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
+    {
+        info.DontBroadcast = true;
+        var attacker = @event.Attacker;
+        var target = @event.Userid;
+            
+        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
+        if (!_roles.ContainsKey(target)) return HookResult.Continue;
+        
+        @event.Userid.PrintToChat(StringUtils.FormatTTT($"You were killed by {GetRole(attacker).FormatStringFullAfter(attacker.PlayerName)}."));
+        @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(target.PlayerName)}."));
+
+        if (IsTraitor(target)) _traitorsLeft--;
+        if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
+
+        if (_traitorsLeft == 0 || _innocentsLeft == 0) _roundService.ForceEnd();
+
+        target.VoiceFlags = VoiceFlags.Muted;
+
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
+    {
+        var players = Utilities.GetPlayers()
+            .Where(player => player.IsValid).Where(player => player.IsReal()).ToList();
+
+        foreach (var player in players) player.PrintToCenter(GetWinner().FormatStringFullAfter("s has won!"));
+
+        Clear();
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+    {
+        _roles.Remove(@event.Userid);
+        return HookResult.Continue;
+    }
+    
     public void AddRoles()
     {
         var eligible = Utilities.GetPlayers()
@@ -155,71 +217,7 @@ public class RoleManager : IRoleService, IPluginBehavior
                 break;
         }
     }
-
-    [GameEventHandler]
-    private HookResult OnRoundStart(EventRoundFreezeEnd @event, GameEventInfo info)
-    {
-        _roundService.SetRoundStatus(RoundStatus.Waiting);
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
-    {
-        _roles.TryAdd(@event.Userid, Role.Unassigned);
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnMapStart(EventGameStart @event, GameEventInfo info)
-    {
-        _roles.Clear();
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
-    {
-        info.DontBroadcast = true;
-        var attacker = @event.Attacker;
-        var target = @event.Userid;
-            
-        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        if (!_roles.ContainsKey(target)) return HookResult.Continue;
-        
-        @event.Userid.PrintToChat(StringUtils.FormatTTT($"You were killed by {GetRole(attacker).FormatStringFullAfter(attacker.PlayerName)}."));
-        @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(target.PlayerName)}."));
-
-        if (IsTraitor(target)) _traitorsLeft--;
-        if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
-
-        if (_traitorsLeft == 0 || _innocentsLeft == 0) _roundService.ForceEnd();
-
-        target.VoiceFlags = VoiceFlags.Muted;
-
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
-    {
-        var players = Utilities.GetPlayers()
-            .Where(player => player.IsValid).Where(player => player.IsReal()).ToList();
-
-        foreach (var player in players) player.PrintToCenter(GetWinner().FormatStringFullAfter("s has won!"));
-
-        Clear();
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
-    {
-        if (_roles.ContainsKey(@event.Userid)) _roles.Remove(@event.Userid);
-
-        return HookResult.Continue;
-    }
-
+    
     public bool IsInnocent(CCSPlayerController player)
     {
         return _roles[player] == Role.Innocent;

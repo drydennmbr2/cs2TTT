@@ -60,8 +60,11 @@ public class Round
     private void SendTraitorMessage()
     {
         StringBuilder message = new();
+        message.AppendLine(StringUtils.FormatTTT("You are a(n) Traitor"));
         message.AppendLine(StringUtils.FormatTTT("Traitors:"));
+        
         var traitors = _roleService.GetTraitors();
+        
         foreach (var traitor in traitors)
         {
             message.AppendLine(StringUtils.FormatTTT(Role.Traitor.FormatStringFullAfter(traitor.PlayerName)));
@@ -76,8 +79,11 @@ public class Round
     private void SendDetectiveMessage()
     {
         StringBuilder message = new();
+        message.AppendLine(StringUtils.FormatTTT("You are a(n) Detective"));
         message.AppendLine(StringUtils.FormatTTT("Detectives:"));
+        
         var detectives = _roleService.GetDetectives();
+        
         foreach (var detective in detectives)
         {
             message.AppendLine(StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(detective.PlayerName)));

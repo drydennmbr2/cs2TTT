@@ -289,6 +289,4 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         return _traitorsLeft == 0 ? Role.Traitor : Role.Innocent;
     }
-    
-    
 }

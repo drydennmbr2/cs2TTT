@@ -46,14 +46,10 @@ public class Round
     }
 
     public void Start()
-    {
-        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid))
-        { 
-            player.PrintToChat(StringUtils.FormatTTT("A new round has started!"));
-        }
+    { 
+        Server.NextFrame(() =>Server.PrintToChatAll(StringUtils.FormatTTT("A new round has started!")));
         SendTraitorMessage();
         SendDetectiveMessage();
-        //get teammates
         _roleService.AddRoles();
     }
 

@@ -5,15 +5,8 @@ using TTT.Public.Mod.Role;
 
 namespace TTT.Roles;
 
-public class RDMListener : IPluginBehavior
+public class RDMListener(IRoleService roleService) : IPluginBehavior
 {
-    private readonly IRoleService _roleService;
-
-    public RDMListener(IRoleService roleService)
-    {
-        _roleService = roleService;
-    }
-
     public void Start(BasePlugin plugin)
     {
         plugin.RegisterEventHandler<EventPlayerDeath>(OnPlayerKill);
@@ -27,8 +20,8 @@ public class RDMListener : IPluginBehavior
 
         if (!killedPlayer.IsValid || !attacker.IsValid) return HookResult.Continue;
 
-        var attackerRole = _roleService.GetRole(attacker);
-        var killedRole = _roleService.GetRole(killedPlayer);
+        var attackerRole = roleService.GetRole(attacker);
+        var killedRole = roleService.GetRole(killedPlayer);
         
         if (attackerRole == Role.Traitor && killedRole != Role.Traitor) return HookResult.Continue;
         if (killedRole == Role.Traitor) return HookResult.Continue;

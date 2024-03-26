@@ -1,16 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <RootNamespace>TTT.Roles</RootNamespace>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj"/>
-        <ProjectReference Include="..\..\mod\TTT.Round\TTT.Round.csproj"/>
-
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>TTT.Roles</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj" />
+    <ProjectReference Include="..\..\mod\TTT.Round\TTT.Round.csproj" />
+  </ItemGroup>
 </Project>

@@ -106,7 +106,6 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         _roles[player] = Role.Detective;
         player.SwitchTeam(CsTeam.CounterTerrorist);
-        player.PrintToChat(Role.Detective.FormatStringFullBefore("You are now a(n)"));
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
         player.GiveNamedItem("weapon_taser");
     }
@@ -116,7 +115,6 @@ public class RoleManager : IRoleService, IPluginBehavior
         foreach (var player in players)
         {
             _roles[player] = Role.Innocent;
-            player.PrintToChat(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.SwitchTeam(CsTeam.Terrorist);
         }

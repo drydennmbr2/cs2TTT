@@ -23,7 +23,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerShoot);
-        parent.AddCommandListener("OnPlayerUse", (player, info) =>
+        parent.AddCommandListener("+use", (player, info) =>
         {
             if (player == null || !player.IsValid || !player.IsReal()) return HookResult.Continue;
             OnPlayerUse(player);

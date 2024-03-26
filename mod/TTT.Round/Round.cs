@@ -10,7 +10,7 @@ namespace TTT.Round;
 public class Round
 {
     private readonly IRoleService _roleService;
-    private float _graceTime = Config.TTTConfig.GraceTime;
+    private float _graceTime = Config.TTTConfig.GraceTime * 64;
 
     public Round(IRoleService roleService)
     {
@@ -19,6 +19,8 @@ public class Round
 
     public void Tick()
     {
+        if (_graceTime % 64 != 0) return;
+        
         var players = Utilities.GetPlayers()
             .Where(player => player.IsValid)
             .Where(player => player.IsReal())
@@ -28,10 +30,15 @@ public class Round
         
         foreach (var player in players)
         {
-            Server.NextFrame(() => player.PrintToCenterHtml($"{formattedColor}<b>[TTT] Game is starting in {_graceTime} seconds</b></font>"));
+            Server.NextFrame(() =>
+            {
+                player.PrintToCenterHtml(
+                    $"{formattedColor}<b>[TTT] Game is starting in {_graceTime / 64} seconds</b></font>");
+                player.PrintToChat("cs2 is ass");
+            });
         }
 
-        _graceTime--;
+        _graceTime -= 64;
     }
 
     public float GraceTime()

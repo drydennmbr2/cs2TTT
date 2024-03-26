@@ -25,7 +25,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         _roundService = new RoundManager(this, parent);
-        _roundService.TickWaiting();
+        new InfoManager(this, parent);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -151,7 +151,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
     {
-        if (_roles.ContainsKey(@event.Userid)) _roles.Add(@event.Userid, Role.Unassigned);
+        _roles.TryAdd(@event.Userid, Role.Unassigned);
         return HookResult.Continue;
     }
 
@@ -199,15 +199,8 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        _roles.Remove(@event.Userid);
+        if (_roles.ContainsKey(@event.Userid)) _roles.Remove(@event.Userid);
 
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    private HookResult OnPlayerHintMessage(EventPlayerHintmessage @event, GameEventInfo info)
-    {
-        //unused
         return HookResult.Continue;
     }
 

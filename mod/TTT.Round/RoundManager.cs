@@ -1,8 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Timers;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
@@ -14,16 +12,18 @@ public class RoundManager : IRoundService
     private readonly BasePlugin _plugin;
 
     private readonly IRoleService _roleService;
+    private readonly LogsListener _logs;
     private Round? _round;
     private RoundStatus _roundStatus = RoundStatus.Paused;
-    private LogsListener _logs;
 
     public RoundManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
         _plugin = plugin;
         _logs = new LogsListener(roleService, plugin, 1);
+        plugin.RegisterListener<Listeners.OnTick>(TickWaiting);
 
+        /*
         VirtualFunctions.SwitchTeamFunc.Hook(hook =>
         {
             if (_roundStatus != RoundStatus.Started) return HookResult.Continue;
@@ -36,7 +36,7 @@ public class RoundManager : IRoundService
 
             return HookResult.Continue;
         }, HookMode.Pre);
-        
+        */
     }
 
 
@@ -69,24 +69,20 @@ public class RoundManager : IRoundService
 
     public void TickWaiting()
     {
-        _plugin.AddTimer(1f, () =>
+        if (_round == null)
         {
-            if (_round == null)
-            {
-                _round = new Round(_roleService);
-                return;
-            }
-            
-            if (_roundStatus != RoundStatus.Waiting) return;
-            
-            _round.Tick();
+            _round = new Round(_roleService);
+            return;
+        }
 
-            if (_round.GraceTime() != 0) return;
+        if (_roundStatus != RoundStatus.Waiting) return;
 
-            _roundStatus = RoundStatus.Started;
-            _round.Start();
+        _round.Tick();
 
-        }, TimerFlags.STOP_ON_MAPCHANGE | TimerFlags.REPEAT);
+        if (_round.GraceTime() != 0) return;
+
+        _roundStatus = RoundStatus.Started;
+        _round.Start();
     }
 
     public void ForceStart()
@@ -104,7 +100,8 @@ public class RoundManager : IRoundService
         _roundStatus = RoundStatus.Ended;
         _logs.IncrementRound();
         _round = new Round(_roleService);
-        Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(1, RoundEndReason.Unknown);
+        Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(1,
+            RoundEndReason.Unknown);
     }
 
     private void AddGracePeriod()

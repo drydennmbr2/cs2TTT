@@ -39,6 +39,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         var eligible = Utilities.GetPlayers()
             .Where(player => player.PawnIsAlive)
             .Where(player => player.IsReal())
+            .Where(player => player.Team != CsTeam.Spectator)
             .ToList();
 
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 2));
@@ -168,11 +169,12 @@ public class RoleManager : IRoleService, IPluginBehavior
         info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
-
+            
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-
-        @event.Userid.PrintToChat($"You were killed by {GetRole(attacker).FormatStringAfter(attacker.PlayerName)}.");
-        @event.Attacker.PrintToChat($"You killed {GetRole(target).FormatStringAfter(target.PlayerName)}.");
+        if (!_roles.ContainsKey(target)) return HookResult.Continue;
+        
+        @event.Userid.PrintToChat($"You were killed by {GetRole(attacker).FormatStringFullAfter(attacker.PlayerName)}.");
+        @event.Attacker.PrintToChat($"You killed {GetRole(target).FormatStringFullAfter(target.PlayerName)}.");
 
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;

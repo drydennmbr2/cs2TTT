@@ -27,8 +27,8 @@ public class DamageAction : IAction
     {
         var actorRole = _actor.Item2;
         var attackedPlayerRole = _attackedPlayer.Item2;
-        return $"[TTT] {actorRole.FormatStringFullBefore(_actor.Item1.PlayerName)}" +
-               $" damaged {attackedPlayerRole.FormatStringFullBefore(_attackedPlayer.Item1.PlayerName)}" +
+        return $"[TTT] {actorRole.FormatStringFullAfter(_actor.Item1.PlayerName)}" +
+               $" damaged {attackedPlayerRole.FormatStringFullAfter(_attackedPlayer.Item1.PlayerName)}" +
                $" for {_damage} hp. {IAction.GoodAction(actorRole, attackedPlayerRole)}";
     }
 }

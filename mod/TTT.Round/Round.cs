@@ -34,7 +34,6 @@ public class Round
             {
                 player.PrintToCenterHtml(
                     $"{formattedColor}<b>[TTT] Game is starting in {_graceTime / 64} seconds</b></font>");
-                player.PrintToChat("cs2 is ass");
             });
         }
 

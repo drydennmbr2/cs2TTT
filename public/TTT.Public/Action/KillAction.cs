@@ -24,8 +24,8 @@ public class KillAction : IAction
     {
         var actorRole = _actor.Item2;
         var attackedPlayerRole = _attackedPlayer.Item2;
-        return $"[TTT] {actorRole.FormatStringFullBefore(_actor.Item1.PlayerName)}" +
-               $" killed {attackedPlayerRole.FormatStringFullBefore(_attackedPlayer.Item1.PlayerName)}. " +
+        return $"[TTT] {actorRole.FormatStringFullAfter(_actor.Item1.PlayerName)}" +
+               $" killed {attackedPlayerRole.FormatStringFullAfter(_attackedPlayer.Item1.PlayerName)}. " +
                $"{IAction.GoodAction(actorRole, attackedPlayerRole)}";
     }
 }

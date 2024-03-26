@@ -22,7 +22,6 @@ public class Round
     public void Tick()
     {
         _graceTime--;
-        if (_graceTime % 64 != 0) return;
         
         var players = Utilities.GetPlayers()
             .Where(player => player.IsValid)
@@ -61,7 +60,7 @@ public class Round
     private void SendTraitorMessage()
     {
         StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("Your teammates:"));
+        message.AppendLine(StringUtils.FormatTTT("Traitors:"));
         var traitors = _roleService.GetTraitors();
         foreach (var traitor in traitors)
         {
@@ -77,7 +76,7 @@ public class Round
     private void SendDetectiveMessage()
     {
         StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("Your teammates:"));
+        message.AppendLine(StringUtils.FormatTTT("Detectives:"));
         var detectives = _roleService.GetDetectives();
         foreach (var detective in detectives)
         {

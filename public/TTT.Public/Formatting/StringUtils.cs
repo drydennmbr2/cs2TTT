@@ -11,6 +11,7 @@ public class StringUtils
 
     public static string FormatTTT(string message)
     {
-        return $"{ChatColors.Purple}[{ChatColors.Green}TTT{ChatColors.Purple}]{ChatColors.Green} {message}";
+        
+        return $" {ChatColors.Purple}[{ChatColors.Red}TTT{ChatColors.Purple}]{ChatColors.Green} {message}";
     }
 }

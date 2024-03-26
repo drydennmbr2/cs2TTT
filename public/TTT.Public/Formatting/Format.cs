@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Modules.Utils;
+﻿using System.Drawing;
+using CounterStrikeSharp.API.Modules.Utils;
 using TTT.Public.Mod.Role;
 
 namespace TTT.Public.Formatting;
@@ -12,7 +13,7 @@ public static class Format
 
     public static string FormatStringBefore(this Role role, string message)
     {
-        return ChatColors.Lime + message + " " + FormatRole(role) + ChatColors.Lime;
+        return " " + ChatColors.Green + message + " " + FormatRole(role) + ChatColors.Lime;
     }
 
     public static string FormatStringFullAfter(this Role role, string message)
@@ -22,16 +23,16 @@ public static class Format
 
     public static string FormatStringFullBefore(this Role role, string message)
     {
-        return ChatColors.Lime + message + " " + role.FormatRoleFull() + ChatColors.Lime;
+        return " " + ChatColors.Green + message + " " + role.FormatRoleFull() + ChatColors.Green;
     }
 
     public static string FormatRole(this Role role)
     {
         return role switch
         {
-            Role.Traitor => ChatColors.Red + "T",
-            Role.Detective => ChatColors.Blue + "D",
-            Role.Innocent => ChatColors.Green + "I",
+            Role.Traitor => ChatColors.DarkRed + "T ",
+            Role.Detective => ChatColors.Blue + "D ",
+            Role.Innocent => ChatColors.Green + "I ",
             _ => ""
         };
     }
@@ -40,7 +41,7 @@ public static class Format
     {
         return role switch
         {
-            Role.Traitor => ChatColors.Red + "Traitor",
+            Role.Traitor => ChatColors.DarkRed + "Traitor",
             Role.Detective => ChatColors.Blue + "Detective",
             Role.Innocent => ChatColors.Green + "Innocent",
             Role.Unassigned => "",
@@ -48,16 +49,16 @@ public static class Format
         };
     }
 
-    public static string GetRoleUrl(this Role role)
+    public static string GetCenterRole(this Role role)
     {
         return role switch
         {
             Role.Traitor =>
-                "https://static.wikia.nocookie.net/trouble-in-terrorist-town/images/e/e5/Bar_traitor.png/revision/latest?cb=20230725204816",
+                $"<font color=\"#{Color.DarkRed.R:X2}{Color.DarkRed.G:X2}{Color.DarkRed.B:X2}\"><b>Traitor</b></font>",
             Role.Detective =>
-                "https://static.wikia.nocookie.net/trouble-in-terrorist-town/images/3/37/Bar_det.png/revision/latest?cb=20230725204834",
+                $"<font color=\"#{Color.Blue.R:X2}{Color.Blue.G:X2}{Color.Blue.B:X2}\"><b>Detective</b></font>",
             Role.Innocent =>
-                "https://static.wikia.nocookie.net/trouble-in-terrorist-town/images/4/40/Bar_inno.png/revision/latest?cb=20230725204755",
+                $"<font color=\"#{Color.Lime.R:X2}{Color.Lime.G:X2}{Color.Lime.B:X2}\"><b>Innocent</b></font>",
             Role.Unassigned => "",
             _ => ""
         };

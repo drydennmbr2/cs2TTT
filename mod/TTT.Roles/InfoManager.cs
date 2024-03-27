@@ -24,7 +24,7 @@ public class InfoManager
         {
             OnTick();
         });
-        plugin.AddTimer(5f, OnTickAll
+        plugin.AddTimer(1f, OnTickAll
         ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 

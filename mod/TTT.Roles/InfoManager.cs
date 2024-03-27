@@ -36,19 +36,18 @@ public class InfoManager
             var playerRole = _roleService.GetRole(player);
             if (playerRole == Role.Unassigned) return;
                 
-            Server.NextFrame(() => player.PrintToCenterHtml($"<p>Your Role: </p>{playerRole.GetCenterRole()}"));
-            Server.NextFrame(() => player.PrintToChat($"test"));
+            Server.NextFrame(() => player.PrintToCenterHtml($"<b>Your Role: {playerRole.GetCenterRole()}</b>"));
             
             if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
             
             if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
             {
-                player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.GetCenterRole()}'>");
+                player.PrintToCenterHtml($"<b>Their Role: </b>{value.GetCenterRole()}");
                 continue;
             }
 
             if (playerRole == Role.Innocent)
-                player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.GetCenterRole()}'>");
+                player.PrintToCenterHtml($"<b>Their Role: </b>{Role.Innocent.GetCenterRole()}");
         }
     }
 

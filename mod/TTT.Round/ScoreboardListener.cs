@@ -52,11 +52,11 @@ public static class ScoreboardListener
     private static void RemoveAdvancedScore(CCSPlayerController player)
     {
         var matchStats = player.ActionTrackingServices!.MatchStats;
-        matchStats.Flash_Successes = 0;
+        matchStats.Flash_Count = 0;
         matchStats.HeadShotKills = 0;
         matchStats.CashEarned = 0;
         matchStats.KillReward = 0;
-        Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iFlash_Successes");
+        Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iFlash_Count");
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iHeadShotKills");
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iCashEarned");
         Utilities.SetStateChanged(player, "CSPerRoundStats_t", "m_iKillReward");

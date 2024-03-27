@@ -30,20 +30,17 @@ public class InfoManager
 
     public void OnTick()
     {
-        foreach (var player in from value in _roleService.GetRoles()
-                 let player = value.Key
-                 let role = value.Value
-                 select player)
+        foreach (var player in _roleService.GetRoles().Keys.Where(player => player.IsValid))
         {
             player.ModifyScoreBoard();
             var playerRole = _roleService.GetRole(player);
             if (playerRole == Role.Unassigned) return;
                 
-            Server.NextFrame(() => player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.GetCenterRole()}'>"));
+            Server.NextFrame(() => player.PrintToCenterHtml($"<p>Your Role: </p>{playerRole.GetCenterRole()}"));
             Server.NextFrame(() => player.PrintToChat($"test"));
-
+            
             if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
-
+            
             if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
             {
                 player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.GetCenterRole()}'>");

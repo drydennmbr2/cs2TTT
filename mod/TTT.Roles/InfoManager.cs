@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
@@ -9,14 +10,12 @@ namespace TTT.Roles;
 public class InfoManager
 {
     private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
-    private readonly BasePlugin _plugin;
     private readonly IRoleService _roleService;
 
     public InfoManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
-        _plugin = plugin;
-        OnTick();
+        plugin.RegisterListener<Listeners.OnTick>(OnTick);
     }
 
     public void RegisterLookAtRole(CCSPlayerController player, Role role)
@@ -29,33 +28,31 @@ public class InfoManager
         _playerLookAtRole.Remove(player);
     }
 
-    private void OnTick()
+    public void OnTick()
     {
-        _plugin.RegisterListener<Listeners.OnTick>(() =>
+        foreach (var player in from value in _roleService.GetRoles()
+                 let player = value.Key
+                 let role = value.Value
+                 select player)
         {
-            foreach (var player in from value in _roleService.GetRoles()
-                     let player = value.Key
-                     let role = value.Value
-                     select player)
+            player.ModifyScoreBoard();
+            var playerRole = _roleService.GetRole(player);
+            if (playerRole == Role.Unassigned) return;
+                
+            Server.NextFrame(() => player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.GetCenterRole()}'>"));
+            Server.NextFrame(() => player.PrintToChat($"test"));
+
+            if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
+
+            if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
             {
-                player.ModifyScoreBoard();
-                var playerRole = _roleService.GetRole(player);
-                if (playerRole == Role.Unassigned) return;
-                
-                player.PrintToCenterHtml($"<p>Your Role: </p><img src='{playerRole.FormatRoleFull()}'>");
-                
-                if (!_playerLookAtRole.TryGetValue(player, out var value)) continue;
-
-                if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
-                {
-                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.FormatRoleFull()}'>");
-                    continue;
-                }
-
-                if (playerRole == Role.Innocent)
-                    player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.FormatRoleFull()}'>");
+                player.PrintToCenterHtml($"<p>Their Role: </p><img src='{value.GetCenterRole()}'>");
+                continue;
             }
-        });
+
+            if (playerRole == Role.Innocent)
+                player.PrintToCenterHtml($"<p>Their Role: </p><img src='{Role.Innocent.GetCenterRole()}'>");
+        }
     }
 
     [GameEventHandler]

@@ -47,16 +47,25 @@ public class Round
 
     public void Start()
     { 
+        _roleService.AddRoles();
         Server.NextFrame(() =>Server.PrintToChatAll(StringUtils.FormatTTT("A new round has started!")));
         SendTraitorMessage();
         SendDetectiveMessage();
-        _roleService.AddRoles();
+        SendInnocentMessage();
     }
 
+    private void SendInnocentMessage()
+    {
+        foreach (var player in _roleService.GetInnocents())
+        {
+            Server.NextFrame(() => player.PrintToChat(StringUtils.FormatTTT("You are now an innocent")));
+        }
+    }
+    
     private void SendTraitorMessage()
     {
         StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("You are a(n) Traitor"));
+        message.AppendLine(StringUtils.FormatTTT("You are a Traitor"));
         message.AppendLine(StringUtils.FormatTTT("Traitors:"));
         
         var traitors = _roleService.GetTraitors();
@@ -75,7 +84,7 @@ public class Round
     private void SendDetectiveMessage()
     {
         StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("You are a(n) Detective"));
+        message.AppendLine(StringUtils.FormatTTT("You are a Detective"));
         message.AppendLine(StringUtils.FormatTTT("Detectives:"));
         
         var detectives = _roleService.GetDetectives();

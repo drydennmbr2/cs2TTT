@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Timers;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
@@ -13,15 +14,18 @@ public class InfoManager
 {
     private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
     private readonly IRoleService _roleService;
+    private readonly Vector directionVec = new();
+    private readonly Vector targetDir = new();
 
     public InfoManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
         plugin.RegisterListener<Listeners.OnTick>(() =>
         {
-            OnTickAll();
             OnTick();
         });
+        plugin.AddTimer(5f, OnTickAll
+        ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 
     public void RegisterLookAtRole(CCSPlayerController player, Role role)
@@ -65,26 +69,23 @@ public class InfoManager
     {
         //if this works i dont even know :P
         var players = Utilities.GetPlayers()
-            .Where(player => player.IsValid)
-            .Where(player => player.IsReal())
-            .Where(player => player.PawnIsAlive)
+            .Where(player => player.IsValid
+            && player.IsReal() 
+            && player.PawnIsAlive)
             .ToList();
         
         _playerLookAtRole.Clear();
         foreach (var player in players)
         {
-            var directionVec = new Vector();
             NativeAPI.AngleVectors(player.PlayerPawn.Value.EyeAngles.Handle, directionVec.Handle, IntPtr.Zero, IntPtr.Zero);
             foreach (var target in players)
             {
                 if (player == target) continue;
-                var targetDir = new Vector();
                 
                 NativeAPI.AngleVectors(target.PlayerPawn.Value.EyeAngles.Handle, targetDir.Handle, IntPtr.Zero,
                     IntPtr.Zero);
                 
                 if (directionVec.Length2D() - targetDir.Length2D() > 10) continue;
-                
                 
                 Vector3 vec1 = new(directionVec.X, directionVec.Y, directionVec.Z);
                 Vector3 vec2 = new(targetDir.X, targetDir.Y, targetDir.X);

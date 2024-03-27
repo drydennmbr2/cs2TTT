@@ -101,7 +101,7 @@ public class RoundManager : IRoundService
         _logs.IncrementRound();
         _round = new Round(_roleService);
         Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(1,
-            RoundEndReason.Unknown);
+            RoundEndReason.RoundDraw);
     }
 
     private void AddGracePeriod()

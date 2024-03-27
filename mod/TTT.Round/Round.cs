@@ -64,39 +64,33 @@ public class Round
     
     private void SendTraitorMessage()
     {
-        StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("You are a Traitor"));
-        message.AppendLine(StringUtils.FormatTTT("Traitors:"));
-        
         var traitors = _roleService.GetTraitors();
         
         foreach (var traitor in traitors)
         {
-            message.AppendLine(StringUtils.FormatTTT(Role.Traitor.FormatStringFullAfter(traitor.PlayerName)));
-        }
-
-        foreach (var player in traitors)
-        {
-            Server.NextFrame(() => player.PrintToChat(message.ToString()));
+            Server.NextFrame(() => traitor.PrintToChat(StringUtils.FormatTTT("You are a Traitor")));
+            Server.NextFrame(() => traitor.PrintToChat(StringUtils.FormatTTT("Traitors:")));
+            foreach (var player in traitors)
+            {
+                var message = StringUtils.FormatTTT(Role.Traitor.FormatStringFullAfter(player.PlayerName));
+                Server.NextFrame(() => traitor.PrintToChat(message));
+            }
         }
     }
 
     private void SendDetectiveMessage()
     {
-        StringBuilder message = new();
-        message.AppendLine(StringUtils.FormatTTT("You are a Detective"));
-        message.AppendLine(StringUtils.FormatTTT("Detectives:"));
-        
-        var detectives = _roleService.GetDetectives();
+        var detectives = _roleService.GetTraitors();
         
         foreach (var detective in detectives)
         {
-            message.AppendLine(StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(detective.PlayerName)));
-        }
-
-        foreach (var player in detectives)
-        {
-            Server.NextFrame(() => player.PrintToChat(message.ToString()));
+            Server.NextFrame(() => detective.PrintToChat(StringUtils.FormatTTT("You are a Detective")));
+            Server.NextFrame(() => detective.PrintToChat(StringUtils.FormatTTT("Detective:")));
+            foreach (var player in detectives)
+            {
+                var message = StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(player.PlayerName));
+                Server.NextFrame(() => detective.PrintToChat(message));
+            }
         }
     }
 }

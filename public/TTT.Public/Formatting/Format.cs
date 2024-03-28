@@ -18,7 +18,7 @@ public static class Format
 
     public static string FormatStringFullAfter(this Role role, string message)
     {
-        return role.FormatRoleFull() + " " +  ChatColors.Lime + message;
+        return role.FormatRoleFull() +  ChatColors.Lime + message;
     }
 
     public static string FormatStringFullBefore(this Role role, string message)
@@ -59,7 +59,7 @@ public static class Format
                 $"<font color=\"#{Color.Blue.R:X2}{Color.Blue.G:X2}{Color.Blue.B:X2}\"><b>Detective</b></font>",
             Role.Innocent =>
                 $"<font color=\"#{Color.Lime.R:X2}{Color.Lime.G:X2}{Color.Lime.B:X2}\"><b>Innocent</b></font>",
-            Role.Unassigned => "",
+            Role.Unassigned => $"<font color=\"#{Color.DarkGray.R:X2}{Color.DarkGray.G:X2}{Color.DarkGray.B:X2}\"><b>Unknown</b></font>",
             _ => ""
         };
     }

@@ -23,35 +23,27 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerShoot);
-        parent.AddCommandListener("+use", (player, info) =>
+        parent.RegisterListener<Listeners.OnTick>(() =>
         {
-            if (player == null || !player.IsValid || !player.IsReal()) return HookResult.Continue;
-            OnPlayerUse(player);
-            return HookResult.Continue;
-        }, HookMode.Pre);
+            foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid && player.IsReal()).Where(player => (player.Buttons & PlayerButtons.Use) != 0))
+            {
+                OnPlayerUse(player);
+            }
+        });
     }
-
 
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
         var weapon = @event.Weapon;
         if (weapon != "weapon_taser") return HookResult.Continue;
-        var zeusWeapon = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
 
-        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
-        {
-            if (!zeusWeapon) return HookResult.Continue;
-            var damage = hook.GetParam<CTakeDamageInfo>(1);
-            damage.Damage = 0;
-            Utilities.SetStateChanged(target, "CTakeDamageInfo", "m_flDamage");
-            zeusWeapon = false;
-            return HookResult.Changed;
-        }, HookMode.Pre);
+        @event.DmgHealth = 0;
+        @event.DmgArmor = 0;
 
         var targetRole = _roleService.GetRole(target);
 

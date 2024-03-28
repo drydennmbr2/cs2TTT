@@ -65,8 +65,8 @@ public class RoleManager : IRoleService, IPluginBehavior
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
         
-        @event.Userid.PrintToChat(StringUtils.FormatTTT($"You were killed by {GetRole(attacker).FormatStringFullAfter(attacker.PlayerName)}."));
-        @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(target.PlayerName)}."));
+        @event.Userid.PrintToChat(StringUtils.FormatTTT($"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
+        @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
 
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;

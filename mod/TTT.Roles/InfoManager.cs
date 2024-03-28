@@ -61,7 +61,7 @@ public class InfoManager
             }
 
             Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
-                                                            + $"<font class='fontsize=m' color='red'>Their Role: {Role.Innocent.GetCenterRole()}"));
+                                                            + $"<font class='fontsize=m' color='red'>Their Role: {Role.Unassigned.GetCenterRole()}"));
         }
     }
 

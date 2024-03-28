@@ -88,7 +88,7 @@ public class Round
             Server.NextFrame(() => detective.PrintToChat(StringUtils.FormatTTT("Detective:")));
             foreach (var player in detectives)
             {
-                var message = StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(player.PlayerName));
+                var message = StringUtils.FormatTTT(Role.Detective.FormatStringFullAfter(" " + player.PlayerName));
                 Server.NextFrame(() => detective.PrintToChat(message));
             }
         }

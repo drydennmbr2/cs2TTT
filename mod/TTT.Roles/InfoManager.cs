@@ -28,7 +28,7 @@ public class InfoManager
 
     public void RegisterLookAtRole(CCSPlayerController player, Role role)
     {
-        _playerLookAtRole.Add(player, role);
+        _playerLookAtRole.TryAdd(player, role);
     }
 
     public void RemoveLookAtRole(CCSPlayerController player)

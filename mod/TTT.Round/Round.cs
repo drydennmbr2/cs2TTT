@@ -80,7 +80,7 @@ public class Round
 
     private void SendDetectiveMessage()
     {
-        var detectives = _roleService.GetTraitors();
+        var detectives = _roleService.GetDetectives();
         
         foreach (var detective in detectives)
         {

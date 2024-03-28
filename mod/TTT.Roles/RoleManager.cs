@@ -105,8 +105,8 @@ public class RoleManager : IRoleService, IPluginBehavior
             .Where(player => player.Team != CsTeam.Spectator)
             .ToList();
 
-        var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 2));
-        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / Config.TTTConfig.DetectiveRatio));
+        var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 3));
+        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 4));
 
         _traitorsLeft = traitorCount;
         _innocentsLeft = eligible.Count - traitorCount;
@@ -261,6 +261,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     private void ApplyTraitorColor(CCSPlayerController player)
     {
+        return;
         if (!player.IsReal() || player.Pawn.Value == null)
             return;
 

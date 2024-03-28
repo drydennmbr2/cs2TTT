@@ -40,7 +40,7 @@ public class InfoManager
     {
         foreach (var player in _roleService.GetRoles().Keys.Where(player => player.IsValid))
         {
-            player.ModifyScoreBoard();
+            //player.ModifyScoreBoard();
             var playerRole = _roleService.GetRole(player);
             if (playerRole == Role.Unassigned) continue;
                 

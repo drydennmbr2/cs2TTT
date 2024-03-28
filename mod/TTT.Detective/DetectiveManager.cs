@@ -68,7 +68,6 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
     private void OnPlayerUse(CCSPlayerController player)
     {
-        player.PrintToChat("+use");
         IdentifyBody(player);   
     }
 
@@ -81,9 +80,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         if (entity == null) return;
 
         var killerEntity = entity.Killer.Value;
-
-        if (entity.RagdollSource.Value! is not CCSPlayerController) return;
-
+        
         var controller = entity.RagdollSource.Value.As<CCSPlayerController>();
         
         var controllerRole = _roleService.GetRole(controller);

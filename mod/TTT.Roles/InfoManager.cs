@@ -14,8 +14,6 @@ public class InfoManager
 {
     private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
     private readonly IRoleService _roleService;
-    private readonly Vector directionVec = new();
-    private readonly Vector targetDir = new();
 
     public InfoManager(IRoleService roleService, BasePlugin plugin)
     {
@@ -68,6 +66,7 @@ public class InfoManager
     public void OnTickAll()
     {
         //if this works i dont even know :P
+        //removed natives
         var players = Utilities.GetPlayers()
             .Where(player => player.IsValid
             && player.IsReal() 
@@ -77,18 +76,17 @@ public class InfoManager
         _playerLookAtRole.Clear();
         foreach (var player in players)
         {
-            NativeAPI.AngleVectors(player.PlayerPawn.Value.EyeAngles.Handle, directionVec.Handle, IntPtr.Zero, IntPtr.Zero);
+            var playerAngles = player.PlayerPawn.Value.EyeAngles;
+            Vector3 vec1 = new (playerAngles.X, playerAngles.Y, playerAngles.Z);
             foreach (var target in players)
             {
                 if (player == target) continue;
+
+                var targetAngles = target.PlayerPawn.Value.EyeAngles;
+                Vector3 vec2 = new(targetAngles.X, targetAngles.Y, targetAngles.Z);
                 
-                NativeAPI.AngleVectors(target.PlayerPawn.Value.EyeAngles.Handle, targetDir.Handle, IntPtr.Zero,
-                    IntPtr.Zero);
+                if (vec1.Length() - vec2.Length() > 10) continue;
                 
-                if (directionVec.Length2D() - targetDir.Length2D() > 10) continue;
-                
-                Vector3 vec1 = new(directionVec.X, directionVec.Y, directionVec.Z);
-                Vector3 vec2 = new(targetDir.X, targetDir.Y, targetDir.X);
                 var angleInRadians = Math.Acos(Vector3.Dot(vec1, vec2) / (vec1.Length() * vec2.Length()));
                 var degree = (Math.PI * 2) / angleInRadians;
                 if (degree is < 5 or > -5)

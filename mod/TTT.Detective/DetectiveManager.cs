@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API;
+﻿using System.Linq;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
@@ -85,13 +86,13 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         
         var controllerRole = _roleService.GetRole(controller);
 
-        if (killerEntity == null)
-        {
-            Server.PrintToChatAll(
-                $"[TTT] Player {_roleService.GetRole(caller).FormatStringFullBefore(caller.PlayerName)} found body {controllerRole.FormatStringFullBefore(controller.PlayerName)}");
-            _roleService.ApplyColorFromRole(controller, controllerRole);
-            return;
-        }
+        
+        _roleService.ApplyColorFromRole(controller, controllerRole);
+        Server.PrintToChatAll(
+            $"[TTT] Player {_roleService.GetRole(caller).FormatStringFullBefore(caller.PlayerName)} found body {controllerRole.FormatStringFullBefore(controller.PlayerName)}");
+        _roleService.ApplyColorFromRole(controller, controllerRole);
+        
+        if (killerEntity == null) return;
 
         if (!killerEntity.IsValid) return;
 
@@ -99,11 +100,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
 
         if (_roleService.GetRole(caller) == Role.Detective)
-            Server.PrintToChatAll(
-                $"[TTT] {controllerRole.FormatStringFullBefore(controller.PlayerName)} was killed by {_roleService.GetRole(killer).FormatStringFullBefore(killer.PlayerName)}");
+            Server.PrintToChatAll($"[TTT] {controllerRole.FormatStringFullBefore(controller.PlayerName)} was killed by {_roleService.GetRole(killer).FormatStringFullBefore(killer.PlayerName)}");
     }
 
-    private CRagdollProp? GetNearbyEntity(CBaseEntity player)
+    private CRagdollProp? GetNearbyEntity(CCSPlayerController player)
     {
         var entities = Utilities
             .GetAllEntities()
@@ -111,9 +111,14 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             .Where(entity => entity is CRagdollProp)
             .ToList();
 
-        if (!entities.Any(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin))) return null;
-
+        if (!entities.Any(entity =>
+            {
+                Server.NextFrame(() => player.PrintToChat(IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin).ToString()));
+                return IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin);
+            })) return null;
+    
         var entity = entities.First(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin));
+        Server.NextFrame(() => player.PrintToChat(entity.ToString()));
 
         return (CRagdollProp)entity;
     }

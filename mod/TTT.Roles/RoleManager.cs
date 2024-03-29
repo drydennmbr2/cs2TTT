@@ -73,7 +73,9 @@ public class RoleManager : IRoleService, IPluginBehavior
 
         if (_traitorsLeft == 0 || _innocentsLeft == 0) _roundService.ForceEnd();
 
-        target.VoiceFlags = VoiceFlags.Muted;
+        target.PawnIsAlive = true;
+        Utilities.SetStateChanged(target.Pawn.Value, "CCSPlayerController", "m_bPawnIsAlive");
+
 
         return HookResult.Continue;
     }

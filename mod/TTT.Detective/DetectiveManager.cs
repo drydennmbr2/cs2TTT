@@ -42,7 +42,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
-
+        if (_roleService.GetRole(attacker) != Role.Detective) return HookResult.Continue;
         @event.DmgHealth = 0;
         @event.DmgArmor = 0;
 
@@ -61,9 +61,8 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         Server.NextFrame(() =>
         {
             attacker.PrintToChat(targetRole.FormatStringFullBefore("[TTT] You tased player: "));
-            pawn.RemovePlayerItem(activeWeapon);
         });
-
+        
         return HookResult.Changed;
     }
 

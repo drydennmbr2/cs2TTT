@@ -64,18 +64,21 @@ public class RoleManager : IRoleService, IPluginBehavior
             
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
-        if (attacker == target) return HookResult.Continue;
-        @event.Userid.PrintToChat(StringUtils.FormatTTT($"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
-        @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
+        ApplyColorFromRole(target, GetRole(target));
+        Server.NextFrame(() =>
+        {
+            Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));
+            if (attacker == target) return;
+            @event.Userid.PrintToChat(StringUtils.FormatTTT(
+                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
+            @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
+            
+        });
 
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
 
         if (_traitorsLeft == 0 || _innocentsLeft == 0) _roundService.ForceEnd();
-
-        target.PawnIsAlive = true;
-        Utilities.SetStateChanged(target.Pawn.Value, "CCSPlayerController", "m_bPawnIsAlive");
-
 
         return HookResult.Continue;
     }

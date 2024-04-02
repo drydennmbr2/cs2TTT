@@ -66,8 +66,6 @@ public class RoleManager : IRoleService, IPluginBehavior
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
         
-        ApplyColorFromRole(target, GetRole(target));
-        
         Server.NextFrame(() =>
         {
             Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));

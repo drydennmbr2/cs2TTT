@@ -27,6 +27,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, parent);
+        
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -64,7 +65,9 @@ public class RoleManager : IRoleService, IPluginBehavior
             
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
+        
         ApplyColorFromRole(target, GetRole(target));
+        
         Server.NextFrame(() =>
         {
             Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));
@@ -266,7 +269,6 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     private void ApplyTraitorColor(CCSPlayerController player)
     {
-        return;
         if (!player.IsReal() || player.Pawn.Value == null)
             return;
 
@@ -283,9 +285,9 @@ public class RoleManager : IRoleService, IPluginBehavior
 
         player.Pawn.Value.RenderMode = RenderMode_t.kRenderGlow;
         player.Pawn.Value.Render = Color.Green;
+        
         Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
     }
-
 
     private Role GetWinner()
     {

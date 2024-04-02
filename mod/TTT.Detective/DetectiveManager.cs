@@ -107,7 +107,11 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var entities = Utilities
             .GetAllEntities()
             .Where(entity => entity.IsValid)
-            .Where(entity => entity is CRagdollProp)
+            .Where(entity =>
+            {
+                Server.NextFrame(() => player.PrintToChat(entity.ToString()));
+                return entity is CRagdollProp;
+            })
             .ToList();
 
         if (!entities.Any(entity =>

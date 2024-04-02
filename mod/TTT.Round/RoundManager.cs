@@ -9,8 +9,6 @@ namespace TTT.Round;
 
 public class RoundManager : IRoundService
 {
-    private readonly BasePlugin _plugin;
-
     private readonly IRoleService _roleService;
     private readonly LogsListener _logs;
     private Round? _round;
@@ -19,7 +17,6 @@ public class RoundManager : IRoundService
     public RoundManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
-        _plugin = plugin;
         _logs = new LogsListener(roleService, plugin, 1);
         plugin.RegisterListener<Listeners.OnTick>(TickWaiting);
 

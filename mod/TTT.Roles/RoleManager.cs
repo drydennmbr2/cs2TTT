@@ -62,7 +62,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
-            
+
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
         

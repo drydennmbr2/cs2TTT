@@ -39,9 +39,10 @@ public class LogsListener
     {
         var killer = @event.Attacker;
         var deadPlayer = @event.Userid;
-
+        
+        if (killer == null) return HookResult.Continue;
         if (!killer.IsValid || !deadPlayer.IsValid) return HookResult.Continue;
-
+        
         _actions.Add(new KillAction(new Tuple<CCSPlayerController, Role>(killer, _roleService.GetRole(killer)),
             new Tuple<CCSPlayerController, Role>(deadPlayer, _roleService.GetRole(deadPlayer))
         ));
@@ -56,7 +57,6 @@ public class LogsListener
         var damage = @event.DmgHealth;
 
         if (!killer.IsValid || !deadPlayer.IsValid) return HookResult.Continue;
-
         //var hitbox = @event.Hitgroup; wip
 
         _actions.Add(new DamageAction(new Tuple<CCSPlayerController, Role>(killer, _roleService.GetRole(killer)),
@@ -71,14 +71,12 @@ public class LogsListener
     [GameEventHandler]
     private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
-        var message = CreateMessage();
-
-        Server.PrintToConsole(message);
-
-        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid).Where(player => player.IsReal())
-                     .ToList()) Server.NextFrame(() => player.PrintToConsole(message));
+        var chatMessage = CreateChatMessage();
         
-        Server.PrintToConsole(message);
+        foreach (var player in Utilities.GetPlayers().Where(player => player.IsValid).Where(player => player.IsReal())
+                     .ToList()) Server.NextFrame(() => player.PrintToConsole(chatMessage));
+        
+        Server.PrintToConsole(chatMessage);
 
         _actions.Clear();
 
@@ -90,7 +88,7 @@ public class LogsListener
         
     }
 
-    private string CreateMessage()
+    private string CreateChatMessage()
     {
         var builder = new StringBuilder();
         builder.AppendLine($"[TTT] Logs round {_roundId}");

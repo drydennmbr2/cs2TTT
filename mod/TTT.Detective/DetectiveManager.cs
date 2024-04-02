@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
@@ -85,21 +86,19 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         
         var controllerRole = _roleService.GetRole(controller);
 
+        string message;
         
-        _roleService.ApplyColorFromRole(controller, controllerRole);
-        Server.PrintToChatAll(
-            $"[TTT] Player {_roleService.GetRole(caller).FormatStringFullBefore(caller.PlayerName)} found body {controllerRole.FormatStringFullBefore(controller.PlayerName)}");
-        _roleService.ApplyColorFromRole(controller, controllerRole);
+        if (killerEntity == null || !killerEntity.IsValid)
+        {
+            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by world"));
+        }
+        else
+        {
+            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by ") + _roleService.GetRole((CCSPlayerController)killerEntity).FormatRoleFull());
+        }
         
-        if (killerEntity == null) return;
-
-        if (!killerEntity.IsValid) return;
-
-        if (killerEntity is not CCSPlayerController killer) return;
-
-
         if (_roleService.GetRole(caller) == Role.Detective)
-            Server.PrintToChatAll($"[TTT] {controllerRole.FormatStringFullBefore(controller.PlayerName)} was killed by {_roleService.GetRole(killer).FormatStringFullBefore(killer.PlayerName)}");
+            Server.PrintToChatAll(message);
     }
 
     private CRagdollProp? GetNearbyEntity(CCSPlayerController player)

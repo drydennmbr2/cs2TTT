@@ -18,6 +18,7 @@ public class InfoManager
     public InfoManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
+        return;
         plugin.RegisterListener<Listeners.OnTick>(() =>
         {
             OnTick();

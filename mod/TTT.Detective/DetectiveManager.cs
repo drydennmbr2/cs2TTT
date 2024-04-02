@@ -37,6 +37,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
+        return HookResult.Continue;
         var weapon = @event.Weapon;
         if (weapon != "weapon_taser") return HookResult.Continue;
         var attacker = @event.Attacker;

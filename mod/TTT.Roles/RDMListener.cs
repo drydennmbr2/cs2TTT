@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using TTT.Public.Behaviors;
 using TTT.Public.Mod.Role;
@@ -25,6 +26,8 @@ public class RDMListener(IRoleService roleService) : IPluginBehavior
         
         if (attackerRole == Role.Traitor && killedRole != Role.Traitor) return HookResult.Continue;
         if (killedRole == Role.Traitor) return HookResult.Continue;
+        
+        Server.NextFrame(() => attacker.CommitSuicide(false, true));
         
         return HookResult.Continue;
     }

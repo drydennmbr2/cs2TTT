@@ -75,18 +75,21 @@ public class RoundManager : IRoundService
         if (_roundStatus != RoundStatus.Waiting) return;
 
         _round.Tick();
+        AddGracePeriod();
 
         if (_round.GraceTime() != 0) return;
 
         _roundStatus = RoundStatus.Started;
         _round.Start();
+        
+        if (Utilities.GetPlayers().Where(player => player.IsValid && player.PawnIsAlive).ToList().Count <= 2) ForceEnd();
     }
 
     public void ForceStart()
     {
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
-        //RemoveGracePeriod();
+        RemoveGracePeriod();
         _roundStatus = RoundStatus.Started;
         _round?.Start(); //shouldn't be null
     }

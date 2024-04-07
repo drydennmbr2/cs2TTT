@@ -31,7 +31,7 @@ public class RoleManager : IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
-        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath, HookMode.Pre);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
         parent.RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
     }
@@ -66,14 +66,15 @@ public class RoleManager : IRoleService, IPluginBehavior
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         if (!_roles.ContainsKey(target)) return HookResult.Continue;
         
+        ApplyColorFromRole(target, GetRole(target));
+        
         Server.NextFrame(() =>
         {
-            Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));
+            Server.NextFrame(() => Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}")));
             if (attacker == target) return;
-            @event.Userid.PrintToChat(StringUtils.FormatTTT(
-                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
-            @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
-            
+            Server.NextFrame(() => @event.Userid.PrintToChat(StringUtils.FormatTTT(
+                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}.")));
+            Server.NextFrame(() => @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}.")));
         });
 
         if (IsTraitor(target)) _traitorsLeft--;

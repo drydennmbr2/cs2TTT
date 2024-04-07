@@ -37,7 +37,6 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
-        return HookResult.Continue;
         var weapon = @event.Weapon;
         if (weapon != "weapon_taser") return HookResult.Continue;
         var attacker = @event.Attacker;
@@ -102,7 +101,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             Server.PrintToChatAll(message);
     }
 
-    private CRagdollProp? GetNearbyEntity(CCSPlayerController player)
+    private static CRagdollProp? GetNearbyEntity(CCSPlayerController player)
     {
         var entities = Utilities
             .GetAllEntities()

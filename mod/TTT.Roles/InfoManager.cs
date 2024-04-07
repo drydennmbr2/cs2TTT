@@ -18,7 +18,6 @@ public class InfoManager
     public InfoManager(IRoleService roleService, BasePlugin plugin)
     {
         _roleService = roleService;
-        return;
         plugin.RegisterListener<Listeners.OnTick>(() =>
         {
             OnTick();
@@ -41,7 +40,7 @@ public class InfoManager
     {
         foreach (var player in _roleService.GetRoles().Keys.Where(player => player.IsValid))
         {
-            //player.ModifyScoreBoard();
+            player.ModifyScoreBoard();
             var playerRole = _roleService.GetRole(player);
             if (playerRole == Role.Unassigned) continue;
                 
@@ -52,7 +51,7 @@ public class InfoManager
                 continue;
             }
             
-            if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
+            if (value == playerRole & playerRole != Role.Innocent || playerRole == Role.Traitor || value == Role.Detective)
             {
                 Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
                                                           + $"<font class='fontsize=m' color='red'>Their Role: {value.GetCenterRole()}"));

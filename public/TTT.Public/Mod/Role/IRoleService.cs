@@ -1,10 +1,12 @@
 using CounterStrikeSharp.API.Core;
+using TTT.Public.Player;
 
 namespace TTT.Public.Mod.Role;
 
 public interface IRoleService
 {
-    Dictionary<CCSPlayerController, Role> GetRoles();
+    List<IPlayerService> GetPlayers();
+    IPlayerService GetPlayer(CCSPlayerController player);
     Role GetRole(CCSPlayerController player);
     void AddRoles();
     ISet<CCSPlayerController> GetTraitors();

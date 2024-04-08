@@ -3,12 +3,13 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Utils;
+using TTT.Player;
 using TTT.Public.Behaviors;
-using TTT.Public.Configuration;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
+using TTT.Public.Player;
 using TTT.Round;
 
 namespace TTT.Roles;
@@ -17,7 +18,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 {
     private const int MaxDetectives = 3;
 
-    private readonly Dictionary<CCSPlayerController, Role> _roles = new();
+    private readonly List<IPlayerService> _playerServices = [];
     private int _innocentsLeft;
     private IRoundService _roundService;
     private int _traitorsLeft;
@@ -46,7 +47,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
     {
-        _roles.TryAdd(@event.Userid, Role.Unassigned);
+        _playerServices.Add(new GamePlayer(Role.Unassigned, 0, null, null, @event.Userid.UserId.Value));
         return HookResult.Continue;
     }
 
@@ -64,17 +65,17 @@ public class RoleManager : IRoleService, IPluginBehavior
         var target = @event.Userid;
 
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        if (!_roles.ContainsKey(target)) return HookResult.Continue;
+        if (_playerServices.All(gamePlayer => gamePlayer.Player() != target)) return HookResult.Continue;
         
         ApplyColorFromRole(target, GetRole(target));
         
         Server.NextFrame(() =>
         {
-            Server.NextFrame(() => Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}")));
+            Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));
             if (attacker == target) return;
-            Server.NextFrame(() => @event.Userid.PrintToChat(StringUtils.FormatTTT(
-                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}.")));
-            Server.NextFrame(() => @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}.")));
+            @event.Userid.PrintToChat(StringUtils.FormatTTT(
+                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
+            @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
         });
 
         if (IsTraitor(target)) _traitorsLeft--;
@@ -100,7 +101,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        _roles.Remove(@event.Userid);
+        _playerServices.RemoveAll(match => match.Player() == @event.Userid);
         return HookResult.Continue;
     }
     
@@ -140,32 +141,37 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public ISet<CCSPlayerController> GetTraitors()
     {
-        return _roles.Keys.Where(player => GetRole(player) == Role.Traitor).ToHashSet();
+        return _playerServices.Where(player => player.PlayerRole() == Role.Traitor).Select(player => player.Player()).ToHashSet();
     }
 
     public ISet<CCSPlayerController> GetDetectives()
     {
-        return _roles.Keys.Where(player => GetRole(player) == Role.Detective).ToHashSet();
+        return _playerServices.Where(player => player.PlayerRole() == Role.Detective).Select(player => player.Player()).ToHashSet();
     }
 
     public ISet<CCSPlayerController> GetInnocents()
     {
-        return _roles.Keys.Where(player => GetRole(player) == Role.Innocent).ToHashSet();
+        return _playerServices.Where(player => player.PlayerRole() == Role.Innocent).Select(player => player.Player()).ToHashSet();
     }
 
-    public Dictionary<CCSPlayerController, Role> GetRoles()
+    public List<IPlayerService> GetPlayers()
     {
-        return _roles;
+        return _playerServices;
+    }
+
+    public IPlayerService GetPlayer(CCSPlayerController player)
+    {
+        throw new NotImplementedException();
     }
 
     public Role GetRole(CCSPlayerController player)
     {
-        return !_roles.TryGetValue(player, out var value) ? Role.Unassigned : value;
+        return _playerServices[player.UserId.Value].PlayerRole();
     }
 
     public void AddTraitor(CCSPlayerController player)
     {
-        _roles[player] = Role.Traitor;
+        _playerServices[player.UserId.Value].SetPlayerRole(Role.Traitor);
         player.SwitchTeam(CsTeam.Terrorist);
         player.PrintToCenter(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
         player.PrintToChat(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
@@ -173,7 +179,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public void AddDetective(CCSPlayerController player)
     {
-        _roles[player] = Role.Detective;
+        _playerServices[player.UserId.Value].SetPlayerRole(Role.Detective);
         player.SwitchTeam(CsTeam.CounterTerrorist);
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
         player.GiveNamedItem("weapon_taser");
@@ -183,7 +189,7 @@ public class RoleManager : IRoleService, IPluginBehavior
     {
         foreach (var player in players)
         {
-            _roles[player] = Role.Innocent;
+            _playerServices[player.UserId.Value].SetPlayerRole(Role.Innocent);
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.SwitchTeam(CsTeam.Terrorist);
         }
@@ -191,19 +197,21 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public bool IsDetective(CCSPlayerController player)
     {
-        return _roles[player] == Role.Detective;
+        return _playerServices.Where(gamePlayer => gamePlayer.Player() == player)
+            .Any(gameProfile => gameProfile.PlayerRole() == Role.Detective);
     }
 
     public bool IsTraitor(CCSPlayerController player)
     {
-        return _roles[player] == Role.Traitor;
+        return _playerServices.Where(gamePlayer => gamePlayer.Player() == player)
+            .Any(gameProfile => gameProfile.PlayerRole() == Role.Traitor);
     }
 
     public void Clear()
     {
         RemoveColors();
 
-        foreach (var key in _roles.Keys.ToList()) _roles[key] = Role.Unassigned;
+        foreach (var key in _playerServices) key.SetPlayerRole(Role.Unassigned);
     }
 
     public void ApplyColorFromRole(CCSPlayerController player, Role role)
@@ -227,18 +235,18 @@ public class RoleManager : IRoleService, IPluginBehavior
     
     public bool IsInnocent(CCSPlayerController player)
     {
-        return _roles[player] == Role.Innocent;
+        return IsTraitor(player) || IsDetective(player);
     }
 
     private void SetColors()
     {
-        foreach (var pair in _roles)
+        foreach (var key in _playerServices)
         {
-            if (IsDetective(pair.Key))
-                ApplyDetectiveColor(pair.Key);
+            if (IsDetective(key.Player()))
+                ApplyDetectiveColor(key.Player());
 
-            if (IsTraitor(pair.Key))
-                ApplyTraitorColor(pair.Key);
+            if (IsTraitor(key.Player()))
+                ApplyTraitorColor(key.Player());
         }
     }
 

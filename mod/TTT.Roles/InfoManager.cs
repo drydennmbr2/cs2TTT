@@ -38,8 +38,9 @@ public class InfoManager
 
     public void OnTick()
     {
-        foreach (var player in _roleService.GetRoles().Keys.Where(player => player.IsValid))
+        foreach (var player in _roleService.GetPlayers().Select(player => player.Player()))
         {
+            if (!player.IsValid) return;
             player.ModifyScoreBoard();
             var playerRole = _roleService.GetRole(player);
             if (playerRole == Role.Unassigned) continue;

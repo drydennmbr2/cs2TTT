@@ -79,8 +79,7 @@ public class RoundManager : IRoundService
 
         if (_round.GraceTime() != 0) return;
 
-        _roundStatus = RoundStatus.Started;
-        _round.Start();
+        ForceStart();
         
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2) ForceEnd();
     }

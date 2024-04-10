@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
+using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
@@ -34,6 +35,8 @@ public class RoundManager : IRoundService
 
             return HookResult.Continue;
         }, HookMode.Pre);
+        
+        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(_ => _roundStatus != RoundStatus.Waiting ? HookResult.Continue : HookResult.Stop, HookMode.Pre);
     }
 
 
@@ -121,7 +124,7 @@ public class RoundManager : IRoundService
         //smth else?
         //disable +use
     }
-
+    
     private void RemoveGracePeriod()
     {
         var players = Utilities.GetPlayers()

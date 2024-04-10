@@ -32,20 +32,30 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
                 OnPlayerUse(player);
             }
         });
+        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
+        {
+            CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
+            if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
+            var attacker = info.Attacker.Value.As<CCSPlayerController>();
+            if (attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value.DesignerName != "weapon_taser")
+                return HookResult.Continue;
+            return HookResult.Stop;
+        }, HookMode.Pre);
     }
 
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
         var weapon = @event.Weapon;
-        if (weapon != "weapon_taser") return HookResult.Continue;
+       
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
+        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
+        if (attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value.DesignerName != "weapon_taser")
+            return HookResult.Continue;
         if (_roleService.GetRole(attacker) != Role.Detective) return HookResult.Continue;
-        @event.DmgHealth = 0;
-        @event.DmgArmor = 0;
 
         var targetRole = _roleService.GetRole(target);
 

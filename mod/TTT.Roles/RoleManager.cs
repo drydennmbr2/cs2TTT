@@ -161,7 +161,7 @@ public class RoleManager : IRoleService, IPluginBehavior
 
     public IPlayerService GetPlayer(CCSPlayerController player)
     {
-        throw new NotImplementedException();
+        return _playerServices[player.UserId.Value];
     }
 
     public Role GetRole(CCSPlayerController player)

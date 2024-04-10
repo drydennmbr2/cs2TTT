@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
+using CounterStrikeSharp.API.Modules.Memory;
 using TTT.Public.Extensions;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
@@ -20,7 +21,7 @@ public class RoundManager : IRoundService
         _logs = new LogsListener(roleService, plugin, 1);
         plugin.RegisterListener<Listeners.OnTick>(TickWaiting);
 
-        /*
+        
         VirtualFunctions.SwitchTeamFunc.Hook(hook =>
         {
             if (_roundStatus != RoundStatus.Started) return HookResult.Continue;
@@ -33,7 +34,6 @@ public class RoundManager : IRoundService
 
             return HookResult.Continue;
         }, HookMode.Pre);
-        */
     }
 
 
@@ -82,7 +82,7 @@ public class RoundManager : IRoundService
         _roundStatus = RoundStatus.Started;
         _round.Start();
         
-        if (Utilities.GetPlayers().Where(player => player.IsValid && player.PawnIsAlive).ToList().Count <= 2) ForceEnd();
+        if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2) ForceEnd();
     }
 
     public void ForceStart()
@@ -90,8 +90,8 @@ public class RoundManager : IRoundService
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
         RemoveGracePeriod();
-        _roundStatus = RoundStatus.Started;
         _round?.Start(); //shouldn't be null
+        _roundStatus = RoundStatus.Started;
     }
 
     public void ForceEnd()
@@ -115,7 +115,7 @@ public class RoundManager : IRoundService
         {
             //buggy?
             var weapon = player.PlayerPawn.Value!.WeaponServices!.ActiveWeapon.Value!;
-            weapon.NextPrimaryAttackTick = (int)(2 + Server.CurrentTime);
+            weapon.NextPrimaryAttackTick = (int)(15 + Server.CurrentTime);
             Utilities.SetStateChanged(player, "CBasePlayerWeapon", "m_nNextPrimaryAttackTick");
         }
 

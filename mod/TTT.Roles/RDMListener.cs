@@ -3,6 +3,8 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using TTT.Public.Behaviors;
 using TTT.Public.Mod.Role;
+using TTT.Public.Mod.Round;
+using TTT.Round;
 
 namespace TTT.Roles;
 

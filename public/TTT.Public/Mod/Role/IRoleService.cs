@@ -5,8 +5,6 @@ namespace TTT.Public.Mod.Role;
 
 public interface IRoleService
 {
-    List<IPlayerService> GetPlayers();
-    IPlayerService GetPlayer(CCSPlayerController player);
     Role GetRole(CCSPlayerController player);
     void AddRoles();
     ISet<CCSPlayerController> GetTraitors();

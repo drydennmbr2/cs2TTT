@@ -92,7 +92,7 @@ public class RoundManager : IRoundService
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
         RemoveGracePeriod();
-        _round?.Start(); //shouldn't be null
+        _round?.Start(); 
         _roundStatus = RoundStatus.Started;
     }
 

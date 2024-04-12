@@ -8,6 +8,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj" />
     <ProjectReference Include="..\..\mod\TTT.Round\TTT.Round.csproj" />
-    <ProjectReference Include="..\TTT.Player\TTT.Player.csproj" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Modules.Timers;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
+using TTT.Public.Player;
 using TTT.Round;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
@@ -13,9 +14,9 @@ namespace TTT.Roles;
 public class InfoManager
 {
     private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
-    private readonly IRoleService _roleService;
+    private readonly RoleManager _roleService;
 
-    public InfoManager(IRoleService roleService, BasePlugin plugin)
+    public InfoManager(RoleManager roleService, BasePlugin plugin)
     {
         _roleService = roleService;
         plugin.RegisterListener<Listeners.OnTick>(() =>
@@ -38,11 +39,12 @@ public class InfoManager
 
     public void OnTick()
     {
-        foreach (var player in _roleService.GetPlayers().Select(player => player.Player()))
+        foreach (var gamePlayer in _roleService.Players())
         {
+            var player = gamePlayer.Player();
             if (!player.IsValid) return;
             player.ModifyScoreBoard();
-            var playerRole = _roleService.GetRole(player);
+            var playerRole = gamePlayer.PlayerRole();
             if (playerRole == Role.Unassigned) continue;
                 
             
@@ -91,7 +93,7 @@ public class InfoManager
                 var angleInRadians = Math.Acos(Vector3.Dot(vec1, vec2) / (vec1.Length() * vec2.Length()));
                 var degree = (Math.PI * 2) / angleInRadians;
                 if (degree is < 5 or > -5)
-                    RegisterLookAtRole(player, _roleService.GetRole(target));
+                    RegisterLookAtRole(player, _roleService.GetPlayer(target).PlayerRole());
             }
         }
     }

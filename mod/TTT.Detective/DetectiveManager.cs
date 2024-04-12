@@ -37,17 +37,13 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
             if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
             var attacker = info.Attacker.Value.As<CCSPlayerController>();
-            if (attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value.DesignerName != "weapon_taser")
-                return HookResult.Continue;
-            return HookResult.Stop;
+            return attacker.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
         }, HookMode.Pre);
     }
 
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
-        var weapon = @event.Weapon;
-       
         var attacker = @event.Attacker;
         var target = @event.Userid;
 

@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using TTT.Public.Extensions;
+using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
 
@@ -85,6 +86,7 @@ public class RoundManager : IRoundService
         ForceStart();
         
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2) ForceEnd();
+        Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
     }
 
     public void ForceStart()

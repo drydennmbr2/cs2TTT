@@ -58,6 +58,7 @@ public class ShopMenu
             BuyItem(player, item);
             return;
         }
+        player.Player().PrintToChat(StringUtils.FormatTTT("Item not found!"));
     }
 
     public void Create()

@@ -8,5 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj" />
     <ProjectReference Include="..\..\mod\TTT.Round\TTT.Round.csproj" />
+    <ProjectReference Include="..\..\mod\TTT.Shop\TTT.Shop.csproj" />
+
   </ItemGroup>
 </Project>

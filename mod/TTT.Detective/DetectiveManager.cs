@@ -89,7 +89,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var killerEntity = entity.Killer.Value;
         
         var controller = entity.RagdollSource.Value.As<CCSPlayerController>();
-        
+
         var controllerRole = _roleService.GetRole(controller);
 
         string message;

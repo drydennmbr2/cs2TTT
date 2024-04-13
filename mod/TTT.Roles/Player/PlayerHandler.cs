@@ -15,7 +15,7 @@ public class PlayerHandler : IPlayerService
     
     public void CreatePlayer(CCSPlayerController player)
     {
-        _players.TryAdd(player, new GamePlayer(Role.Unassigned, 800, 80, player.UserId.Value));
+        _players.TryAdd(player, new GamePlayer(Role.Unassigned, 1000, 80, player.UserId.Value));
     }
 
     public List<GamePlayer> Players()

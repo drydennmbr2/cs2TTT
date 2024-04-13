@@ -3,7 +3,7 @@ using TTT.Public.Player;
 
 namespace TTT.Public.Mod.Role;
 
-public interface IRoleService
+public interface IRoleService : IPlayerService
 {
     Role GetRole(CCSPlayerController player);
     void AddRoles();

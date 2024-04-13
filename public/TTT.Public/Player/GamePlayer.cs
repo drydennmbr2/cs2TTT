@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using TTT.Public.Mod.Role;
 using TTT.Public.Player;
+using TTT.Public.Shop;
 
 namespace TTT.Player;
 
@@ -14,6 +15,7 @@ public class GamePlayer
     private long _credits;
     private CCSPlayerController? _killer;
     private CRagdollProp? _ragdollProp;
+    private readonly List<IShopItem> _items = [];
 
     public GamePlayer(Role playerRole, long credits, int karma, int playerId)
     {
@@ -23,6 +25,16 @@ public class GamePlayer
         _killer = null;
         _ragdollProp = null;
         _playerId = playerId;
+    }
+
+    public void AddItem(IShopItem item)
+    {
+        _items.Add(item);
+    }
+
+    public bool HasItem(string item)
+    {
+        return _items.Any(shopItem => shopItem.Name().Equals(item));
     }
 
     public CCSPlayerController Player()
@@ -48,6 +60,9 @@ public class GamePlayer
     public void RemoveKarma()
     {
         _karma -= 5;
+        if (_karma >= 40) return;
+        _karma = 80;
+        Server.ExecuteCommand($"css_ban #{_playerId} 1440 Karma too low");
     }
 
     public void SetPlayerRole(Role role)

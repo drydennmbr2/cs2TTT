@@ -27,7 +27,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     {
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, parent);
-        ShopManager.Register(parent, this);
+        ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);

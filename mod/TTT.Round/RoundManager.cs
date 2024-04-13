@@ -82,10 +82,15 @@ public class RoundManager : IRoundService
 
         if (_round.GraceTime() != 0) return;
 
-        SetRoundStatus(RoundStatus.Started);
+        if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2)
+        {
+            ForceEnd();
+            Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
+            return; 
+        }
         
-        if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2) ForceEnd();
-        Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
+        SetRoundStatus(RoundStatus.Started); 
+        
     }
 
     public void ForceStart()

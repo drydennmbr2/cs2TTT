@@ -9,7 +9,6 @@ using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
 using TTT.Public.Mod.Round;
-using TTT.Public.Player;
 using TTT.Roles.Shop;
 using TTT.Round;
 
@@ -23,7 +22,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     private IRoundService _roundService;
     private int _traitorsLeft;
     private InfoManager _infoManager;
-
+    
     public void Start(BasePlugin parent)
     {
         _roundService = new RoundManager(this, parent);

@@ -12,7 +12,7 @@ public class DNAScannerItem : IShopItem
 
     public int Price()
     {
-        return 800;
+        return 1000;
     }
 
     public BuyResult OnBuy(GamePlayer player)

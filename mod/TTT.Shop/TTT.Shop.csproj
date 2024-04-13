@@ -10,5 +10,10 @@
     <ItemGroup>
        <ProjectReference Include="..\..\public\TTT.Public\TTT.Public.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Items\All\" />
+      <Folder Include="Items\Innocent\" />
+    </ItemGroup>
 
 </Project>

@@ -92,7 +92,7 @@ public class RoundManager : IRoundService
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
         RemoveGracePeriod();
-        _round?.Start(); 
+        _round!.Start(); 
         _roundStatus = RoundStatus.Started;
     }
 
@@ -101,7 +101,6 @@ public class RoundManager : IRoundService
         if (_roundStatus == RoundStatus.Ended) return;
         _roundStatus = RoundStatus.Ended;
         _logs.IncrementRound();
-        _round = new Round(_roleService);
         Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!.TerminateRound(1,
             RoundEndReason.RoundDraw);
     }

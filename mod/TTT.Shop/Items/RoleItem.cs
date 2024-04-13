@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using System;
+using CounterStrikeSharp.API.Core;
 using TTT.Player;
 using TTT.Public.Shop;
 
@@ -8,16 +9,16 @@ public class RoleItem : IShopItem
 {
     public string Name()
     {
-        throw new NotImplementedException();
+        return "Role Item";
     }
 
     public int Price()
     {
-        throw new NotImplementedException();
+        return 0;
     }
 
     public BuyResult OnBuy(GamePlayer player)
     {
-        throw new NotImplementedException();
+        return BuyResult.Successful;
     }
 }

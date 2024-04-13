@@ -1,4 +1,5 @@
-﻿using TTT.Player;
+﻿using System;
+using TTT.Player;
 using TTT.Public.Shop;
 
 namespace TTT.Shop.Items.Traitor;
@@ -18,6 +19,6 @@ public class WallHackItem : IShopItem
 
     public BuyResult OnBuy(GamePlayer player)
     {
-        throw new NotImplementedException();
+        return BuyResult.Successful;
     }
 }

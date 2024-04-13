@@ -32,9 +32,9 @@ public class GamePlayer
         _items.Add(item);
     }
 
-    public bool HasItem(IShopItem item)
+    public bool HasItem(string item)
     {
-        return _items.Contains(item);
+        return _items.Any(shopItem => shopItem.Name().Equals(item));
     }
 
     public CCSPlayerController Player()

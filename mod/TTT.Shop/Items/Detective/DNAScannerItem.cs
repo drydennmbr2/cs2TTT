@@ -1,4 +1,5 @@
-﻿using TTT.Player;
+﻿using System;
+using TTT.Player;
 using TTT.Public.Shop;
 
 namespace TTT.Shop.Items;
@@ -17,6 +18,6 @@ public class DNAScannerItem : IShopItem
 
     public BuyResult OnBuy(GamePlayer player)
     {
-        throw new NotImplementedException();
+        return BuyResult.Successful;
     }
 }

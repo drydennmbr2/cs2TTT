@@ -22,7 +22,6 @@ public class RoundManager : IRoundService
         _roleService = roleService;
         _logs = new LogsListener(roleService, plugin, 1);
         plugin.RegisterListener<Listeners.OnTick>(TickWaiting);
-
         
         VirtualFunctions.SwitchTeamFunc.Hook(hook =>
         {
@@ -83,7 +82,7 @@ public class RoundManager : IRoundService
 
         if (_round.GraceTime() != 0) return;
 
-        ForceStart();
+        SetRoundStatus(RoundStatus.Started);
         
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2) ForceEnd();
         Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
@@ -95,7 +94,6 @@ public class RoundManager : IRoundService
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
         RemoveGracePeriod();
         _round!.Start(); 
-        _roundStatus = RoundStatus.Started;
     }
 
     public void ForceEnd()

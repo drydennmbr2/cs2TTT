@@ -8,7 +8,6 @@ public class PlayerHandler : IPlayerService
 {
     private readonly Dictionary<CCSPlayerController, GamePlayer> _players = [];
     
-
     public Dictionary<CCSPlayerController, GamePlayer> GetPlayers()
     {
         return _players;
@@ -16,7 +15,7 @@ public class PlayerHandler : IPlayerService
     
     public void CreatePlayer(CCSPlayerController player)
     {
-        _players.TryAdd(player, new GamePlayer(Role.Unassigned, 0, 0, player.UserId.Value));
+        _players.TryAdd(player, new GamePlayer(Role.Unassigned, 800, 80, player.UserId.Value));
     }
 
     public List<GamePlayer> Players()

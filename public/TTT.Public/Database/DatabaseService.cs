@@ -47,4 +47,21 @@ public class DatabaseService
         });
         return new GamePlayer(Role.Unassigned, 800, 0, player.UserId.Value);
     }
+
+    public void UpdatePlayer(GamePlayer player)
+    {
+        Task.Run(async () =>
+        {
+            var command = new MySqlCommand("UPDATE PlayerData SET kills = @kills, deaths = @deaths, karma = @karma, traitor_kills = @traitor_kills, traitors_killed = @traitors_killed" +
+                                           " WHERE steamid = @steamid;");
+            command.Parameters.AddWithValue("@kills", 0);
+            command.Parameters.AddWithValue("@deaths", 0);
+            command.Parameters.AddWithValue("@karma", player.Karma());
+            command.Parameters.AddWithValue("@traitor_kills", 0);
+            command.Parameters.AddWithValue("@traitors_killed", 0);
+            command.Parameters.AddWithValue("@steamid", player.Player().SteamID);
+            command.Connection = _connector;
+            await command.ExecuteNonQueryAsync();
+        });
+    }
 }

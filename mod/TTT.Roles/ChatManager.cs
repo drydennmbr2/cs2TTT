@@ -41,7 +41,7 @@ public class ChatManager(IRoleService roleService) : IPluginBehavior
                 break;
             }
             case Role.Unassigned:
-                return HookResult.Stop;
+                return HookResult.Continue;
             default:
                 throw new ArgumentOutOfRangeException();
         }

@@ -1,6 +1,7 @@
 ﻿using TTT.Player;
+using TTT.Public.Shop;
 
-namespace TTT.Public.Shop.Items;
+namespace TTT.Shop.Items;
 
 public class TaserItem : IShopItem
 {
@@ -14,7 +15,7 @@ public class TaserItem : IShopItem
         return 1000;
     }
 
-    public bool OnBuy(GamePlayer player)
+    public BuyResult OnBuy(GamePlayer player)
     {
         throw new NotImplementedException();
     }

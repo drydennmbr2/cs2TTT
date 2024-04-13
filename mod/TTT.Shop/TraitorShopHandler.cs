@@ -1,6 +1,8 @@
-﻿using TTT.Public.Shop.Items;
+﻿
 
-namespace Shop;
+using TTT.Shop.Items;
+
+namespace TTT.Shop;
 
 public class TraitorShopHandler : BaseShopHandler
 {

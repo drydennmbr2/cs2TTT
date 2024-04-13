@@ -1,7 +1,7 @@
 ﻿using TTT.Player;
 using TTT.Public.Shop;
 
-namespace Shop.Items;
+namespace TTT.Shop.Items;
 
 public class DNAScannerItem : IShopItem
 {
@@ -15,7 +15,7 @@ public class DNAScannerItem : IShopItem
         return 800;
     }
 
-    public bool OnBuy(GamePlayer player)
+    public BuyResult OnBuy(GamePlayer player)
     {
         throw new NotImplementedException();
     }

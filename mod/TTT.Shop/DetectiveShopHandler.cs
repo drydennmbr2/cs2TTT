@@ -1,6 +1,7 @@
-﻿using TTT.Public.Shop.Items;
+﻿
+using TTT.Shop.Items;
 
-namespace Shop;
+namespace TTT.Shop;
 
 public class DetectiveShopHandler : BaseShopHandler
 {

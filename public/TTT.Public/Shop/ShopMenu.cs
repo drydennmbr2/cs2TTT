@@ -8,25 +8,40 @@ namespace TTT.Public.Shop;
 
 public class ShopMenu
 {
-    private int _currentPage;
-    private readonly IShopItemHandler _shopItemHandler;
+    private readonly ChatMenu _menu = new("Shop Menu");
     private readonly IPlayerService _playerService;
-    private readonly BaseMenu _menu = new ChatMenu("Shop Menu");
+    private readonly IShopItemHandler _shopItemHandler;
+    private int _currentPage;
 
     public ShopMenu(IShopItemHandler shopItemHandler, IPlayerService playerService, int currentPage = 0)
     {
         _currentPage = currentPage;
         _shopItemHandler = shopItemHandler;
         _playerService = playerService;
+        Create();
     }
 
     public void BuyItem(GamePlayer player, IShopItem item)
     {
         var successful = item.OnBuy(player);
-
-        player.Player().PrintToChat(successful
-            ? StringUtils.FormatTTT($"You bought {item.Name()} for ${item.Price()}")
-            : StringUtils.FormatTTT($"You don't have enough credits to buy {item.Name()}"));
+        switch (successful)
+        {
+            //print message from enum
+            case BuyResult.NotEnoughCredits:
+                player.Player()
+                    .PrintToChat(StringUtils.FormatTTT($"You don't have enough credits to buy {item.Name()}"));
+                break;
+            case BuyResult.Successful:
+                player.Player().PrintToChat(StringUtils.FormatTTT($"You have bought {item.Name()}"));
+                break;
+            case BuyResult.AlreadyOwned:
+                player.Player().PrintToChat(StringUtils.FormatTTT($"You already own {item.Name()}"));
+                break;
+            case BuyResult.IncorrectRole:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     public void BuyItem(GamePlayer player, int index)
@@ -45,18 +60,18 @@ public class ShopMenu
         }
     }
 
-    public void NextPage()
+    public void Create()
     {
-        _currentPage++;
-        ShowPage();
-    }
-
-    public void ShowPage()
-    {
-        for (var index = 1 * _currentPage; index < index + 9; index++)
+        for (var index = 0; index < _shopItemHandler.GetShopItems().Count; index++)
         {
             var item = _shopItemHandler.GetShopItems().ElementAt(index);
-            _menu.AddMenuOption(item.Name() + $" - {item.Price()} credits", (player, option) => BuyItem(_playerService.GetPlayer(player), item));
+            _menu.AddMenuOption(item.Name() + $" - {item.Price()} credits",
+                (player, option) => BuyItem(_playerService.GetPlayer(player), item));
         }
+    }
+    
+    public void Open(CCSPlayerController player)
+    {
+        MenuManager.OpenChatMenu(player, _menu);
     }
 }

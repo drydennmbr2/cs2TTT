@@ -1,15 +1,14 @@
 ﻿using TTT.Public.Behaviors;
-using TTT.Public.Player;
 using TTT.Public.Shop;
-using TTT.Public.Shop.Items;
+using TTT.Shop.Items;
 
-namespace Shop;
+namespace TTT.Shop;
 
 public class BaseShopHandler : IShopItemHandler, IPluginBehavior
 {
     private readonly ISet<IShopItem> _items = new HashSet<IShopItem>();
 
-    private static readonly BaseShopHandler _instance = new BaseShopHandler();
+    private static readonly BaseShopHandler Instance = new BaseShopHandler();
 
     protected BaseShopHandler()
     {
@@ -18,13 +17,12 @@ public class BaseShopHandler : IShopItemHandler, IPluginBehavior
     
     public void OnLoad()
     {
-        AddShopItem(new TaserItem());
         AddShopItem(new RoleItem());
     }
     
     public static BaseShopHandler Get()
     {
-        return _instance;
+        return Instance;
     }
 
     public ISet<IShopItem> GetShopItems()

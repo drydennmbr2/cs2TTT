@@ -1,8 +1,11 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
+using CounterStrikeSharp.API.Modules.Memory;
 using TTT.Player;
+using TTT.Public.Mod.Role;
+using TTT.Public.Shop;
 
-namespace TTT.Public.Shop.Items;
+namespace TTT.Shop.Items;
 
 public class AwpItem : IShopItem
 {
@@ -16,16 +19,14 @@ public class AwpItem : IShopItem
         return 2000;
     }
 
-    public bool OnBuy(GamePlayer player)
+    public BuyResult OnBuy(GamePlayer player)
     {
-        throw new NotImplementedException();
+        if (player.Credits() < Price()) return BuyResult.NotEnoughCredits;
+        if (player.PlayerRole() != Role.Detective) return BuyResult.IncorrectRole;
+        player.RemoveCredits(Price());
+        player.Player().GiveNamedItem(CsItem.AWP);
+        return BuyResult.Successful;
     }
 
-    public bool OnBuy(CCSPlayerController player)
-    {
-        if (false) return true;
-        player.DropActiveWeapon();
-        player.GiveNamedItem(CsItem.AWP);
-        return true;
-    }
+    
 }

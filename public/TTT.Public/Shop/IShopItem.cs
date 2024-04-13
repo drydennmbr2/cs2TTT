@@ -7,5 +7,5 @@ public interface IShopItem
 {
     string Name();
     int Price();
-    bool OnBuy(GamePlayer player);
+    BuyResult OnBuy(GamePlayer player);
 }

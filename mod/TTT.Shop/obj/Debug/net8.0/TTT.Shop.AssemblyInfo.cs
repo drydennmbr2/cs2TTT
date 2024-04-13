@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TTT.Shop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d5d237dacdd2fcba455c4006a5c56966c8a5776")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e64960ca154b3b7d33f518a664a97c045f41319")]
 [assembly: System.Reflection.AssemblyProductAttribute("TTT.Shop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TTT.Shop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

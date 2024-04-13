@@ -1,7 +1,8 @@
 ﻿using CounterStrikeSharp.API.Core;
 using TTT.Player;
+using TTT.Public.Shop;
 
-namespace TTT.Public.Shop.Items;
+namespace TTT.Shop.Items;
 
 public class RoleItem : IShopItem
 {
@@ -15,7 +16,7 @@ public class RoleItem : IShopItem
         throw new NotImplementedException();
     }
 
-    public bool OnBuy(GamePlayer player)
+    public BuyResult OnBuy(GamePlayer player)
     {
         throw new NotImplementedException();
     }

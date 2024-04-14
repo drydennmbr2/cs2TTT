@@ -24,6 +24,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
     public void Start(BasePlugin parent)
     {
+        return;
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerShoot);
         parent.RegisterListener<Listeners.OnTick>(() =>
         {

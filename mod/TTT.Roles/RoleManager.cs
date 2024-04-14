@@ -115,7 +115,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 4));
 
         _traitorsLeft = traitorCount;
-        _innocentsLeft = eligible.Count - traitorCount;
+        _innocentsLeft = eligible.Count - traitorCount - 1;
 
         if (detectiveCount > MaxDetectives) detectiveCount = MaxDetectives;
 

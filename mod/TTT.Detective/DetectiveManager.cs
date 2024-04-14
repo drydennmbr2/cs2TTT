@@ -45,6 +45,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerShoot(EventPlayerHurt @event, GameEventInfo info)
     {
+        return HookResult.Continue;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 

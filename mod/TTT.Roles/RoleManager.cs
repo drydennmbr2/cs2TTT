@@ -60,7 +60,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
-        info.DontBroadcast = true;
+        //info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
@@ -172,7 +172,6 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         GetPlayer(player).SetPlayerRole(Role.Detective);
         player.SwitchTeam(CsTeam.CounterTerrorist);
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
-        player.GiveNamedItem("weapon_taser");
     }
 
     public void AddInnocents(IEnumerable<CCSPlayerController> players)

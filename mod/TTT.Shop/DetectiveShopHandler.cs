@@ -14,7 +14,7 @@ public class DetectiveShopHandler : BaseShopHandler
     }
     
     
-    public static DetectiveShopHandler Get()
+    public new static DetectiveShopHandler Get()
     {
         return _instance;
     }

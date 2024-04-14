@@ -14,7 +14,7 @@ public class TraitorShopHandler : BaseShopHandler
         AddItems("Traitor");
     }
     
-    public static TraitorShopHandler Get()
+    public new static TraitorShopHandler Get()
     {
         return _instance;
     }

@@ -17,6 +17,7 @@ Creating new items or modifying existing ones is easy. Create a new class in the
 > Available groups are [All, Detective, Traitor].
 > SimpleName is used for /buy <name>
 
+# Example Item
 ```c#
 namespace TTT.Shop.Items.Traitor;
 
@@ -40,7 +41,7 @@ public class AwpItem : IShopItem
     public BuyResult OnBuy(GamePlayer player)
     {
         if (player.Credits() < Price()) return BuyResult.NotEnoughCredits;
-        if (player.PlayerRole() != Role.Detective) return BuyResult.IncorrectRole;
+        if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
         player.RemoveCredits(Price());
         player.Player().GiveNamedItem(CsItem.AWP);
         return BuyResult.Successful;

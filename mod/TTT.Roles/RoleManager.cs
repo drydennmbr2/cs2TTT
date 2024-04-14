@@ -66,7 +66,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
 
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         
-        ApplyColorFromRole(target, GetRole(target));
+        //ApplyColorFromRole(target, GetRole(target));
         
         Server.NextFrame(() =>
         {
@@ -135,7 +135,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         }
 
         AddInnocents(eligible);
-        SetColors();
+        //SetColors();
     }
 
     public ISet<CCSPlayerController> GetTraitors()

@@ -65,7 +65,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         var target = @event.Userid;
 
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        
+        if (!attacker.IsReal() || !target.IsReal()) return HookResult.Continue;
         
         Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
         

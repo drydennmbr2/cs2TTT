@@ -26,13 +26,13 @@ public class ShopMenu
         var successful = item.OnBuy(player);
         switch (successful)
         {
-            //print message from enum
             case BuyResult.NotEnoughCredits:
                 player.Player()
                     .PrintToChat(StringUtils.FormatTTT($"You don't have enough credits to buy {item.Name()}"));
                 break;
             case BuyResult.Successful:
                 player.Player().PrintToChat(StringUtils.FormatTTT($"You have bought {item.Name()}"));
+                player.AddItem(item);
                 break;
             case BuyResult.AlreadyOwned:
                 player.Player().PrintToChat(StringUtils.FormatTTT($"You already own {item.Name()}"));
@@ -67,7 +67,7 @@ public class ShopMenu
         {
             var item = _shopItemHandler.GetShopItems().ElementAt(index);
             _menu.AddMenuOption(item.Name() + $" - {item.Price()} credits",
-                (player, option) => BuyItem(_playerService.GetPlayer(player), item));
+                (player, _) => BuyItem(_playerService.GetPlayer(player), item));
         }
     }
     

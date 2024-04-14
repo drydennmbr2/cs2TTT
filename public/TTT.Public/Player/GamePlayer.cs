@@ -6,7 +6,7 @@ using TTT.Public.Shop;
 
 namespace TTT.Player;
 
-public class GamePlayer
+public class GamePlayer : IInventory
 {
 
     private Role _playerRole;
@@ -30,6 +30,16 @@ public class GamePlayer
     public void AddItem(IShopItem item)
     {
         _items.Add(item);
+    }
+
+    public void RemoveItem(string name)
+    {
+        _items.RemoveAll(shopItem => shopItem.Name().Equals(name));
+    }
+
+    public List<IShopItem> GetItems()
+    {
+        return _items;
     }
 
     public bool HasItem(string item)

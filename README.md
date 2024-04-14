@@ -15,6 +15,7 @@ Creating new items or modifying existing ones is easy. Create a new class in the
 
 > [!TIP]
 > Available groups are [All, Detective, Traitor].
+> SimpleName is used for /buy <name>
 
 ```c#
 namespace TTT.Shop.Items.Traitor;
@@ -24,6 +25,11 @@ public class AwpItem : IShopItem
     public string Name()
     {
         return "AWP";
+    }
+
+    public string SimpleName()
+    {
+        return "awp";
     }
 
     public int Price()

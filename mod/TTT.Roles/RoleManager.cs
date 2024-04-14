@@ -199,7 +199,6 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     {
         RemoveColors();
         Clr();
-
         foreach (var key in GetPlayers()) key.Value.SetPlayerRole(Role.Unassigned);
     }
 

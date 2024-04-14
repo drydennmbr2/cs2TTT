@@ -11,13 +11,13 @@ TTT is in heavy development and I want you to know that contributions are always
 
 ## Creating items
 
-Creating new items or modifying existing ones is easy. Create a new class in the correct directory, mod/TTT.Shop/Items/{group}. Then modify it to your liking. Afterwards, compile the plugin and it's all set. The plugin handles loading all the items.
+Creating new items or modifying existing ones is easy. Create a new class in the correct directory, mod/TTT.Shop/Items/{group}. Then create it to your liking. Afterwards, compile the plugin and it's all set. The plugin handles loading all the items.
 
 > [!TIP]
-> Available groups are [All, Detective, Traitor].
-> SimpleName is used for /buy <name>
+> Available groups are [All, Detective, Traitor]. <br>
+> SimpleName is used for /buy {name}
 
-# Example Item
+#### Example Item
 ```c#
 namespace TTT.Shop.Items.Traitor;
 

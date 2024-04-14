@@ -33,7 +33,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
-        //parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
     }
 
@@ -60,13 +60,11 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
-        //info.DontBroadcast = true;
+        info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
 
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        
-        //ApplyColorFromRole(target, GetRole(target));
         
         Server.NextFrame(() =>
         {
@@ -80,7 +78,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
 
-        if (_traitorsLeft == 0 || _innocentsLeft == 0) _roundService.ForceEnd();
+        if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
 
         return HookResult.Continue;
     }

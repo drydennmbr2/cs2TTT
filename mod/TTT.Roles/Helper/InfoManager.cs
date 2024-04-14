@@ -19,11 +19,8 @@ public class InfoManager
     public InfoManager(RoleManager roleService, BasePlugin plugin)
     {
         _roleService = roleService;
-        plugin.RegisterListener<Listeners.OnTick>(() =>
-        {
-            OnTick();
-        });
-        plugin.AddTimer(1f, OnTickAll
+        plugin.RegisterListener<Listeners.OnTick>(OnTick);
+        plugin.AddTimer(3f, OnTickAll
         ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 
@@ -43,7 +40,7 @@ public class InfoManager
         {
             var player = gamePlayer.Player();
             if (!player.IsValid) return;
-            //player.ModifyScoreBoard();
+            player.ModifyScoreBoard();
             var playerRole = gamePlayer.PlayerRole();
             if (playerRole == Role.Unassigned) continue;
                 

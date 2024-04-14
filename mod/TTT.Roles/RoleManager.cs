@@ -63,24 +63,24 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         info.DontBroadcast = true;
         var attacker = @event.Attacker;
         var target = @event.Userid;
-
-        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
+        
         if (!attacker.IsReal() || !target.IsReal()) return HookResult.Continue;
         
-        Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
-        
-        if (attacker == target) return HookResult.Continue;
-        
-        target.PrintToChat(StringUtils.FormatTTT(
-                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
-        attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
-        
-
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
 
         if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
+        Server.NextFrame(() =>
+        {
+            Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
 
+            if (attacker == target) return;
+        
+            target.PrintToChat(StringUtils.FormatTTT(
+                $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
+            attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
+        });
+        
         return HookResult.Continue;
     }
 

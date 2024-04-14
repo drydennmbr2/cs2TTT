@@ -43,7 +43,7 @@ public class InfoManager
         {
             var player = gamePlayer.Player();
             if (!player.IsValid) return;
-            player.ModifyScoreBoard();
+            //player.ModifyScoreBoard();
             var playerRole = gamePlayer.PlayerRole();
             if (playerRole == Role.Unassigned) continue;
                 

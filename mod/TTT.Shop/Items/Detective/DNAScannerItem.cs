@@ -10,6 +10,11 @@ public class DNAScannerItem : IShopItem
         return "DNA Scanner";
     }
 
+    public string SimpleName()
+    {
+        return "dnascanner";
+    }
+
     public int Price()
     {
         return 1000;

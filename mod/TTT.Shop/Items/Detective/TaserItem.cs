@@ -11,6 +11,11 @@ public class TaserItem : IShopItem
        return "Taser";
     }
 
+    public string SimpleName()
+    {
+        return "taser";
+    }
+
     public int Price()
     {
         return 1000;

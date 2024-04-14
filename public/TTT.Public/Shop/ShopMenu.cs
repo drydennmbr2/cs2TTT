@@ -54,7 +54,7 @@ public class ShopMenu
     {
         foreach (var item in _shopItemHandler.GetShopItems())
         {
-            if (!item.Name().Equals(name)) continue;
+            if (!item.SimpleName().Equals(name)) continue;
             BuyItem(player, item);
             return;
         }

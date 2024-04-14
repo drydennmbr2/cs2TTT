@@ -13,7 +13,6 @@
     
     <ItemGroup>
       <Folder Include="Items\All\" />
-      <Folder Include="Items\Innocent\" />
     </ItemGroup>
 
 </Project>

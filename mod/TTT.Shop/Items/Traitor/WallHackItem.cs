@@ -12,6 +12,11 @@ public class WallHackItem : IShopItem
         return "Wall Hack";
     }
 
+    public string SimpleName()
+    {
+        return "wallhack";
+    }
+
     public int Price()
     {
         return 1000;

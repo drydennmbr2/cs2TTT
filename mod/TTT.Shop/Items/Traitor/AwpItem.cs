@@ -1,17 +1,20 @@
-﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Memory;
+﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
 using TTT.Player;
 using TTT.Public.Mod.Role;
 using TTT.Public.Shop;
 
-namespace TTT.Shop.Items;
+namespace TTT.Shop.Items.Traitor;
 
 public class AwpItem : IShopItem
 {
     public string Name()
     {
         return "AWP";
+    }
+
+    public string SimpleName()
+    {
+        return "awp";
     }
 
     public int Price()
@@ -27,6 +30,4 @@ public class AwpItem : IShopItem
         player.Player().GiveNamedItem(CsItem.AWP);
         return BuyResult.Successful;
     }
-
-    
 }

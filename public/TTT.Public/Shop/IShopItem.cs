@@ -6,6 +6,7 @@ namespace TTT.Public.Shop;
 public interface IShopItem
 {
     string Name();
+    string SimpleName();
     int Price();
     BuyResult OnBuy(GamePlayer player);
 }

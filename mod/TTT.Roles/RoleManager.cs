@@ -66,14 +66,15 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
 
         if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
         
-        Server.NextFrame(() =>
-        {
-            Server.PrintToChatAll(StringUtils.FormatTTT($" {GetRole(target).FormatStringFullAfter(" has been found.")}"));
-            if (attacker == target) return;
-            @event.Userid.PrintToChat(StringUtils.FormatTTT(
+        
+        Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
+        
+        if (attacker == target) return HookResult.Continue;
+        
+        target.PrintToChat(StringUtils.FormatTTT(
                 $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
-            @event.Attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
-        });
+        attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
+        
 
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;

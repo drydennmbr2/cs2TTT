@@ -114,19 +114,16 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             .Where(entity => entity.IsValid)
             .Where(entity =>
             {
-                Server.NextFrame(() => player.PrintToChat(entity.ToString() ?? string.Empty));
                 return entity is CRagdollProp;
             })
             .ToList();
         
         if (!entities.Any(entity =>
             {
-                Server.NextFrame(() => player.PrintToChat(IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin).ToString()));
                 return IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin);
             })) return null;
     
         var entity = entities.First(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin));
-        Server.NextFrame(() => player.PrintToChat(entity.ToString()));
 
         return (CRagdollProp)entity;
     }

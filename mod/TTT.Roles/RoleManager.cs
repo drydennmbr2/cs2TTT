@@ -29,12 +29,12 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _infoManager = new InfoManager(this, parent);
         //ShopManager.Register(parent, this); //disabled until items are implemented.
         
+        parent.RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
         parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath, HookMode.Pre);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
-        parent.RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
     }
 
     [GameEventHandler]

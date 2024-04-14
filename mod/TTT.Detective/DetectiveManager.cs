@@ -34,7 +34,7 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         });
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
         {
-            CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
+            var info = hook.GetParam<CTakeDamageInfo>(1);
             if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
             var attacker = info.Attacker.Value.As<CCSPlayerController>();
             return attacker.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;

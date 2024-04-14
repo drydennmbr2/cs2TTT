@@ -78,7 +78,7 @@ public class RoundManager : IRoundService
         if (_roundStatus != RoundStatus.Waiting) return;
 
         _round.Tick();
-        AddGracePeriod();
+        //AddGracePeriod();
 
         if (_round.GraceTime() != 0) return;
 
@@ -97,7 +97,7 @@ public class RoundManager : IRoundService
     {
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
-        RemoveGracePeriod();
+        //RemoveGracePeriod();
         _round!.Start(); 
     }
 

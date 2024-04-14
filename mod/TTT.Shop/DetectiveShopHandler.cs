@@ -1,16 +1,18 @@
 ﻿
-using TTT.Shop.Items;
+using System.Reflection;
+using TTT.Public.Shop;
 
 namespace TTT.Shop;
 
 public class DetectiveShopHandler : BaseShopHandler
 {
     private static readonly DetectiveShopHandler _instance = new DetectiveShopHandler();
-    
-    public DetectiveShopHandler()
+
+    private DetectiveShopHandler()
     {
-        AddShopItem(new TaserItem());
+        AddItems("Detective");
     }
+    
     
     public static DetectiveShopHandler Get()
     {

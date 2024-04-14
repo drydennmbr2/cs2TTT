@@ -11,7 +11,7 @@ public class TraitorShopHandler : BaseShopHandler
     
     public TraitorShopHandler()
     {
-        AddShopItem(new AwpItem());
+        AddItems("Traitor");
     }
     
     public static TraitorShopHandler Get()

@@ -2,7 +2,7 @@
 using TTT.Player;
 using TTT.Public.Shop;
 
-namespace TTT.Shop.Items;
+namespace TTT.Shop.Items.Detective;
 
 public class TaserItem : IShopItem
 {

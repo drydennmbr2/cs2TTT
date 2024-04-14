@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using TTT.Public.Behaviors;
 using TTT.Public.Shop;
 using TTT.Shop.Items;
@@ -13,14 +14,26 @@ public class BaseShopHandler : IShopItemHandler, IPluginBehavior
 
     protected BaseShopHandler()
     {
-        OnLoad();
+        AddItems("All");
+        AddItems("Innocent");
     }
-    
-    public void OnLoad()
+
+    protected void AddItems(string name)
     {
-        AddShopItem(new RoleItem());
+        var fullName = "TTT.Shop.Items" + name;
+        var q = from t in Assembly.GetExecutingAssembly().GetTypes()
+            where t.IsClass && t.Namespace == fullName && t.GetInterface("IShopItem") != null
+            select t;
+
+        foreach (var type in q)
+        {
+            if (type == null) return;
+            var item = (IShopItem?) Activator.CreateInstance(type);
+            if (item == null) return;
+            AddShopItem(item);
+        }
     }
-    
+
     public static BaseShopHandler Get()
     {
         return Instance;

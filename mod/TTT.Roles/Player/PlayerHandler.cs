@@ -16,7 +16,6 @@ public class PlayerHandler : IPlayerService
     public void CreatePlayer(CCSPlayerController player)
     {
         if (_players.ContainsKey(player)) return;
-        player.PrintToChat("wtf???");
         _players.Add(player, new GamePlayer(Role.Unassigned, 1000, 80, player.UserId.Value));
     }
 

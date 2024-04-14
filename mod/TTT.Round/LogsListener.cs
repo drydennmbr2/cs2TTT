@@ -21,7 +21,7 @@ public class LogsListener
         _roundId = roundId;
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerHurt>(OnPlayerDamage);
-        //parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
     }
 
     public void IncrementRound()

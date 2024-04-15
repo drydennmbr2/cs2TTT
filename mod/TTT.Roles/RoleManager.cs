@@ -33,7 +33,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
-        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        parent.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath, HookMode.Pre);
         parent.RegisterEventHandler<EventGameStart>(OnMapStart);
     }
 

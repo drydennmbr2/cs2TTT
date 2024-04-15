@@ -39,11 +39,11 @@ public class InfoManager
         foreach (var gamePlayer in _roleService.Players())
         {
             var player = gamePlayer.Player();
-            if (!player.IsValid) return;
+            if (!player.IsValid) continue;
             player.ModifyScoreBoard();
             var playerRole = gamePlayer.PlayerRole();
             if (playerRole == Role.Unassigned) continue;
-                
+            if (!player.PawnIsAlive) continue;
             
             if (!_playerLookAtRole.TryGetValue(player, out var value))
             {

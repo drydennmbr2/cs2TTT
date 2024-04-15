@@ -72,7 +72,7 @@ public class GamePlayer : IInventory
         _karma -= 5;
         if (_karma >= 40) return;
         _karma = 80;
-        Server.ExecuteCommand($"css_ban #{_playerId} 1440 Karma too low");
+        //Server.ExecuteCommand($"css_ban #{_playerId} 1440 Karma too low");
     }
 
     public void SetPlayerRole(Role role)

@@ -196,8 +196,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         {
             GetPlayer(player).SetPlayerRole(Role.Innocent);
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
-            player.SwitchTeam(CsTeam.Terrorist);
-            ApplyInnocentColor(player);
+            player.SwitchTeam(CsTeam.Terrorist); 
         }
     }
 
@@ -246,11 +245,8 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     {
         foreach (var key in Players())
         {
-            if (IsDetective(key.Player()))
-                ApplyDetectiveColor(key.Player());
-
-            if (IsTraitor(key.Player()))
-                ApplyTraitorColor(key.Player());
+            if (key.PlayerRole() != Role.Innocent) return;
+            ApplyInnocentColor(key.Player());
         }
     }
 

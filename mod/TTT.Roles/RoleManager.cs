@@ -2,7 +2,9 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
+using Microsoft.Extensions.Logging;
 using TTT.Player;
 using TTT.Public.Behaviors;
 using TTT.Public.Extensions;
@@ -29,6 +31,13 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _infoManager = new InfoManager(this, _roundService, parent);
         //ShopManager.Register(parent, this); //disabled until items are implemented.
         
+        parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
+        {
+            if (entity.IsValid) return;
+            if (entity is not CRagdollProp prop) return;
+            
+        });
+        
         parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect, HookMode.Post);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
@@ -52,6 +61,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             _roundService.ForceEnd();
         }
         CreatePlayer(@event.Userid);
+        
         return HookResult.Continue;
     }
 
@@ -256,7 +266,30 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
         }
     }
+    
+    private void SetColorTeam(CBaseEntity entity, string className, string fieldName, Role role = Role.Innocent)
+    {
+        Guard.IsValidEntity(entity);
 
+        if (!Schema.IsSchemaFieldNetworked(className, fieldName))
+        {
+            Application.Instance.Logger.LogWarning("Field {ClassName}:{FieldName} is not networked, but SetStateChanged was called on it.", className, fieldName);
+            return;
+        }
+
+        foreach (var player in GetPlayers().Values.Where(player => player.PlayerRole() != role))
+        {
+            Guard.IsValidEntity(player.Player());   
+            
+            int offset = Schema.GetSchemaOffset(className, fieldName);
+
+            VirtualFunctions.StateChanged(player.Player().NetworkTransmitComponent.Handle, entity.Handle, offset, -1, -1);
+
+            entity.LastNetworkChange = Server.CurrentTime;
+            entity.IsSteadyState.Clear();
+        }
+    }
+    
     private void ApplyDetectiveColor(CCSPlayerController player)
     {
         if (!player.IsReal() || player.Pawn.Value == null)
@@ -264,7 +297,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
 
         player.Pawn.Value.RenderMode = RenderMode_t.kRenderTransColor;
         player.Pawn.Value.Render = Color.Blue;
-        Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
+        SetColorTeam(player, "CBaseModelEntity", "m_clrRender", Role.Detective);
     }
 
     private void ApplyTraitorColor(CCSPlayerController player)
@@ -274,7 +307,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
 
         player.Pawn.Value.RenderMode = RenderMode_t.kRenderGlow;
         player.Pawn.Value.Render = Color.Red;
-        Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
+        SetColorTeam(player, "CBaseModelEntity", "m_clrRender", Role.Traitor);
         //apply for traitors only somehow?
     }
 
@@ -286,7 +319,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         player.Pawn.Value.RenderMode = RenderMode_t.kRenderGlow;
         player.Pawn.Value.Render = Color.Green;
         
-        Utilities.SetStateChanged(player.Pawn.Value, "CBaseModelEntity", "m_clrRender");
+        SetColorTeam(player, "CBaseModelEntity", "m_clrRender");
     }
 
     private Role GetWinner()

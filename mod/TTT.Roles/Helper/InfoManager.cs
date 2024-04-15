@@ -14,7 +14,7 @@ namespace TTT.Roles;
 
 public class InfoManager
 {
-    private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
+    private readonly Dictionary<CCSPlayerController, Tuple<CCSPlayerController, Role>> _playerLookAtRole = new();
     private readonly RoleManager _roleService;
     private readonly IRoundService _manager;
 
@@ -27,7 +27,7 @@ public class InfoManager
         ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 
-    public void RegisterLookAtRole(CCSPlayerController player, Role role)
+    public void RegisterLookAtRole(CCSPlayerController player, Tuple<CCSPlayerController, Role> role)
     {
         _playerLookAtRole.TryAdd(player, role);
     }
@@ -54,16 +54,19 @@ public class InfoManager
                 Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()}"));
                 continue;
             }
-            
-            if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
+
+            if (playerRole == Role.Innocent || (value.Item2 == Role.Traitor && playerRole == Role.Detective))
             {
                 Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
-                                                          + $"<font class='fontsize=m' color='red'>Their Role: {value.GetCenterRole()}"));
+                                                                + $"<font class='fontsize=m' color='red'>Their Role: {Role.Unassigned.GetCenterRole()}"));
                 continue;
             }
-
-            Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
-                                                            + $"<font class='fontsize=m' color='red'>Their Role: {Role.Unassigned.GetCenterRole()}"));
+            
+            if (value.Item2 == playerRole || playerRole == Role.Traitor || value.Item2 == Role.Detective)
+            {
+                Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
+                                                          + $"<font class='fontsize=m' color='red'>{value.Item1.PlayerName}'s Role: {value.Item2.GetCenterRole()}")); 
+            }
         }
     }
 
@@ -95,7 +98,7 @@ public class InfoManager
                 var degree = (Math.PI * 2) / angleInRadians;
                 if (degree is < 7 or > -7)
                 {
-                    RegisterLookAtRole(player, _roleService.GetPlayer(target).PlayerRole());
+                    RegisterLookAtRole(player, new Tuple<CCSPlayerController, Role>(target, _roleService.GetPlayer(target).PlayerRole()));
                     break;
                 }
             }

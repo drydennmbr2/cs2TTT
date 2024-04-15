@@ -151,7 +151,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         }
 
         AddInnocents(eligible);
-        //SetColors();
+        SetColors();
     }
 
     public ISet<CCSPlayerController> GetTraitors()

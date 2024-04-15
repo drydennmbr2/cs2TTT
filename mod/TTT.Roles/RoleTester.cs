@@ -17,5 +17,6 @@ public class RoleTester
         "Determinate if the lights should be shown right away or after few secodns. 0 to disable.");
     private readonly FakeConVar<int> _traitorTesterMaxPlayers = new("traitor_tester_max_players",
         "Determinate how many players can be checked at one. 0 to disable it.");
-
+    
+    
 }

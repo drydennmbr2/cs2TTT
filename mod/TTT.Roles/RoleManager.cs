@@ -26,7 +26,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     public void Start(BasePlugin parent)
     {
         _roundService = new RoundManager(this, parent);
-        _infoManager = new InfoManager(this, parent);
+        _infoManager = new InfoManager(this, _roundService, parent);
         //ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect, HookMode.Post);

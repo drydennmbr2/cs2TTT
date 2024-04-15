@@ -32,12 +32,15 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
                 OnPlayerUse(player);
             }
         });
+        
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
         {
             var info = hook.GetParam<CTakeDamageInfo>(1);
             if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
             var attacker = info.Attacker.Value.As<CCSPlayerController>();
-            return attacker.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
+            if (!attacker.IsReal() || attacker.PlayerPawn.Value == null ||
+                attacker.PlayerPawn.Value.WeaponServices == null) return HookResult.Continue;
+            return attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
         }, HookMode.Pre);
     }
 
@@ -48,9 +51,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
-        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        if (attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value.DesignerName != "weapon_taser")
-            return HookResult.Continue;
+        
+        if (!attacker.IsReal() || attacker.PlayerPawn.Value == null ||
+            attacker.PlayerPawn.Value.WeaponServices == null) return HookResult.Continue;
+        
         if (_roleService.GetRole(attacker) != Role.Detective) return HookResult.Continue;
 
         var targetRole = _roleService.GetRole(target);
@@ -65,6 +69,8 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
         if (activeWeapon == null) return HookResult.Continue;
 
+        if (!activeWeapon.DesignerName.Equals("weapon_taser")) return HookResult.Continue;
+        
         Server.NextFrame(() =>
         {
             attacker.PrintToChat(targetRole.FormatStringFullBefore("[TTT] You tased player: "));
@@ -88,8 +94,11 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
         var killerEntity = entity.Killer.Value;
         
-        var controller = entity.RagdollSource.Value.As<CCSPlayerController>();
-
+        if (entity.RagdollSource.Value == null) return;
+        if (entity.RagdollSource.Value.OwnerEntity.Value == null) return;
+        
+        var controller = entity.RagdollSource.Value.OwnerEntity.Value.As<CCSPlayerController>();
+        
         var controllerRole = _roleService.GetRole(controller);
 
         string message;

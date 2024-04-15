@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Modules.Timers;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
 using TTT.Public.Mod.Role;
+using TTT.Public.Mod.Round;
 using TTT.Public.Player;
 using TTT.Round;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
@@ -15,10 +16,12 @@ public class InfoManager
 {
     private readonly Dictionary<CCSPlayerController, Role> _playerLookAtRole = new();
     private readonly RoleManager _roleService;
+    private readonly IRoundService _manager;
 
-    public InfoManager(RoleManager roleService, BasePlugin plugin)
+    public InfoManager(RoleManager roleService, IRoundService manager, BasePlugin plugin)
     {
         _roleService = roleService;
+        _manager = manager;
         plugin.RegisterListener<Listeners.OnTick>(OnTick);
         plugin.AddTimer(3f, OnTickAll
         ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
@@ -43,6 +46,7 @@ public class InfoManager
             player.ModifyScoreBoard();
             var playerRole = gamePlayer.PlayerRole();
             if (playerRole == Role.Unassigned) continue;
+            if (_manager.GetRoundStatus() != RoundStatus.Started) return;
             if (!player.PawnIsAlive) continue;
             
             if (!_playerLookAtRole.TryGetValue(player, out var value))
@@ -51,7 +55,7 @@ public class InfoManager
                 continue;
             }
             
-            if (value == playerRole & playerRole != Role.Innocent || playerRole == Role.Traitor || value == Role.Detective)
+            if (value == playerRole || playerRole == Role.Traitor || value == Role.Detective)
             {
                 Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
                                                           + $"<font class='fontsize=m' color='red'>Their Role: {value.GetCenterRole()}"));
@@ -77,7 +81,7 @@ public class InfoManager
         foreach (var player in players)
         {
             var playerAngles = player.PlayerPawn.Value.EyeAngles;
-            Vector3 vec1 = new (playerAngles.X, playerAngles.Y, playerAngles.Z);
+            Vector3 vec1 = new(playerAngles.X, playerAngles.Y, playerAngles.Z);
             foreach (var target in players)
             {
                 if (player == target) continue;
@@ -85,12 +89,15 @@ public class InfoManager
                 var targetAngles = target.PlayerPawn.Value.EyeAngles;
                 Vector3 vec2 = new(targetAngles.X, targetAngles.Y, targetAngles.Z);
                 
-                //if (vec1.Length() - vec2.Length() > 10) continue;
+                if (vec1.Length() - vec2.Length() > 10) continue;
                 
                 var angleInRadians = Math.Acos(Vector3.Dot(vec1, vec2) / (vec1.Length() * vec2.Length()));
                 var degree = (Math.PI * 2) / angleInRadians;
-                if (degree is < 5 or > -5)
+                if (degree is < 7 or > -7)
+                {
                     RegisterLookAtRole(player, _roleService.GetPlayer(target).PlayerRole());
+                    break;
+                }
             }
         }
     }

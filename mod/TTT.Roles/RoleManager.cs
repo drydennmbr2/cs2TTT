@@ -197,6 +197,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             GetPlayer(player).SetPlayerRole(Role.Innocent);
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
             player.SwitchTeam(CsTeam.Terrorist);
+            ApplyInnocentColor(player);
         }
     }
 

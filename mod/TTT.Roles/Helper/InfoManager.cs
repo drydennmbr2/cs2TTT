@@ -85,7 +85,7 @@ public class InfoManager
                 var targetAngles = target.PlayerPawn.Value.EyeAngles;
                 Vector3 vec2 = new(targetAngles.X, targetAngles.Y, targetAngles.Z);
                 
-                if (vec1.Length() - vec2.Length() > 10) continue;
+                //if (vec1.Length() - vec2.Length() > 10) continue;
                 
                 var angleInRadians = Math.Acos(Vector3.Dot(vec1, vec2) / (vec1.Length() * vec2.Length()));
                 var degree = (Math.PI * 2) / angleInRadians;

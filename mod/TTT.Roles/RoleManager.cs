@@ -83,6 +83,9 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             target.PrintToChat(StringUtils.FormatTTT(
                 $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
             attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
+            Server.PrintToChatAll(_innocentsLeft.ToString());
+            Server.PrintToChatAll(_traitorsLeft.ToString());
+
         });
         
         return HookResult.Continue;
@@ -112,7 +115,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         var eligible = Utilities.GetPlayers()
             .Where(player => player.PawnIsAlive)
             .Where(player => player.IsReal())
-            .Where(player => player.Team != CsTeam.Spectator)
+            .Where(player => player.Team is not (CsTeam.Spectator or CsTeam.None))
             .ToList();
 
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 3));

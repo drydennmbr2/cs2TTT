@@ -47,6 +47,10 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
     {
+        if (Utilities.GetPlayers().Count(player => player.IsReal() && player.Team != CsTeam.None || player.Team == CsTeam.Spectator) == 3)
+        {
+            _roundService.ForceEnd();
+        }
         CreatePlayer(@event.Userid);
         return HookResult.Continue;
     }

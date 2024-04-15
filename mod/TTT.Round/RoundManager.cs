@@ -84,7 +84,6 @@ public class RoundManager : IRoundService
 
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2)
         {
-            ForceEnd();
             Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
             return; 
         }

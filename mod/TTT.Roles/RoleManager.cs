@@ -29,6 +29,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     {
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, _roundService, parent);
+        ModelHandler.RegisterListener(parent);
         //ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
@@ -38,7 +39,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             
         });
         
-        parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect, HookMode.Post);
+        parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
         parent.RegisterEventHandler<EventRoundFreezeEnd>(OnRoundStart);
         parent.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         parent.RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -83,7 +84,6 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         if (IsTraitor(target)) _traitorsLeft--;
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
 
-        if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
         Server.NextFrame(() =>
         {
             Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
@@ -95,8 +95,10 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
             Server.PrintToChatAll(_innocentsLeft.ToString());
             Server.PrintToChatAll(_traitorsLeft.ToString());
-
         });
+        
+        if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
+
         
         return HookResult.Continue;
     }
@@ -129,7 +131,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             .ToList();
 
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 3));
-        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 4));
+        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 8));
 
         _traitorsLeft = traitorCount;
         _innocentsLeft = eligible.Count - traitorCount - 1;
@@ -181,6 +183,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         player.SwitchTeam(CsTeam.Terrorist);
         player.PrintToCenter(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
         player.PrintToChat(Role.Traitor.FormatStringFullBefore("You are now a(n)"));
+        ModelHandler.SetModelNextServerFrame(player, ModelHandler.ModelPathTmPhoenix);
     }
 
     public void AddDetective(CCSPlayerController player)
@@ -188,6 +191,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         GetPlayer(player).SetPlayerRole(Role.Detective);
         player.SwitchTeam(CsTeam.CounterTerrorist);
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
+        ModelHandler.SetModelNextServerFrame(player, ModelHandler.ModelPathCtmSas);
     }
 
     public void AddInnocents(IEnumerable<CCSPlayerController> players)
@@ -196,7 +200,8 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         {
             GetPlayer(player).SetPlayerRole(Role.Innocent);
             player.PrintToCenter(Role.Innocent.FormatStringFullBefore("You are now an"));
-            player.SwitchTeam(CsTeam.Terrorist); 
+            player.SwitchTeam(CsTeam.Terrorist);     
+            ModelHandler.SetModelNextServerFrame(player, ModelHandler.ModelPathTmPhoenix);
         }
     }
 

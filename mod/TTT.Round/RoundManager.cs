@@ -60,7 +60,6 @@ public class RoundManager : IRoundService
                 ForceStart();
                 break;
             case RoundStatus.Paused:
-                ForceEnd();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(roundStatus), roundStatus, "Invalid round status.");
@@ -85,6 +84,7 @@ public class RoundManager : IRoundService
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2)
         {
             Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
+            _roundStatus = RoundStatus.Paused;
             return; 
         }
         

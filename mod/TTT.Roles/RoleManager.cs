@@ -287,10 +287,10 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             
             int offset = Schema.GetSchemaOffset(className, fieldName);
 
-            VirtualFunctions.StateChanged(player.Player().NetworkTransmitComponent.Handle, entity.Handle, offset, -1, -1);
+            VirtualFunctions.StateChanged(entity.NetworkTransmitComponent.Handle, player.Player().Handle, offset, -1, -1);
 
-            player.Player().LastNetworkChange = Server.CurrentTime;
-            player.Player().IsSteadyState.Clear();
+            entity.LastNetworkChange = Server.CurrentTime;
+            entity.IsSteadyState.Clear();
         }
     }
     

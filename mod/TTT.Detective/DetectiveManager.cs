@@ -38,9 +38,19 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             var info = hook.GetParam<CTakeDamageInfo>(1);
             if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
             var attacker = info.Attacker.Value.As<CCSPlayerController>();
-            if (!attacker.IsReal() || attacker.PlayerPawn.Value == null ||
-                attacker.PlayerPawn.Value.WeaponServices == null) return HookResult.Continue;
-            return attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
+            if (attacker == hook.GetParam<CBaseEntity>(0)) return HookResult.Continue;
+
+            if (!attacker.IsReal()) return HookResult.Continue;
+            var pawn = attacker.PlayerPawn.Value;
+            if (pawn == null) return HookResult.Continue;
+            if (!pawn.IsValid) return HookResult.Continue;
+
+            var weaponService = pawn.WeaponServices;
+
+            if (weaponService == null) return HookResult.Continue;
+            if (weaponService.ActiveWeapon.Value == null) return HookResult.Continue;
+            
+            return weaponService.ActiveWeapon.Value.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
         }, HookMode.Pre);
     }
 
@@ -52,28 +62,25 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
         if (attacker == null || target == null) return HookResult.Continue;
         
-        if (!attacker.IsReal() || attacker.PlayerPawn.Value == null ||
-            attacker.PlayerPawn.Value.WeaponServices == null) return HookResult.Continue;
+        var pawn = attacker.PlayerPawn.Value;
         
-        if (_roleService.GetRole(attacker) != Role.Detective) return HookResult.Continue;
+        if (pawn == null) return HookResult.Continue;
+        if (!pawn.IsValid) return HookResult.Continue;
 
+        var weaponService = pawn.WeaponServices;
+        if (weaponService == null) return HookResult.Continue;
+        if (weaponService.ActiveWeapon.Value == null) return HookResult.Continue;
+        
+        var activeWeapon = weaponService.ActiveWeapon.Value;
+        if (activeWeapon == null) return HookResult.Continue;
+        if (!activeWeapon.DesignerName.Equals("weapon_taser")) return HookResult.Continue;
+        
         var targetRole = _roleService.GetRole(target);
 
-        var pawn = attacker.PlayerPawn.Value;
-        if (pawn == null) return HookResult.Continue;
-
-        var weaponServices = pawn.WeaponServices;
-        if (weaponServices == null) return HookResult.Continue;
-
-        var activeWeapon = weaponServices.ActiveWeapon.Value;
-
-        if (activeWeapon == null) return HookResult.Continue;
-
-        if (!activeWeapon.DesignerName.Equals("weapon_taser")) return HookResult.Continue;
         
         Server.NextFrame(() =>
         {
-            attacker.PrintToChat(targetRole.FormatStringFullBefore("[TTT] You tased player: "));
+            attacker.PrintToChat(StringUtils.FormatTTT($"You tased player {targetRole.FormatStringFullAfter(target.PlayerName)}"));
         });
         
         return HookResult.Changed;

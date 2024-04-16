@@ -279,16 +279,16 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             return;
         }
 
-        foreach (var player in GetPlayers().Values.Where(player => player.PlayerRole() != role))
+        foreach (var player in GetPlayers().Values.Where(player => player.PlayerRole() == role))
         {
             Guard.IsValidEntity(player.Player());   
             
             int offset = Schema.GetSchemaOffset(className, fieldName);
 
-            VirtualFunctions.StateChanged(entity.NetworkTransmitComponent.Handle, player.Player().Handle, offset, -1, -1);
+            VirtualFunctions.StateChanged(player.Player().NetworkTransmitComponent.Handle, entity.Handle, offset, -1, -1);
 
-            entity.LastNetworkChange = Server.CurrentTime;
-            entity.IsSteadyState.Clear();
+            player.Player().LastNetworkChange = Server.CurrentTime;
+            player.Player().IsSteadyState.Clear();
         }
     }
     

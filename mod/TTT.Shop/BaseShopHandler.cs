@@ -20,7 +20,7 @@ public class BaseShopHandler : IShopItemHandler, IPluginBehavior
 
     protected void AddItems(string name)
     {
-        var fullName = "TTT.Shop.Items" + name;
+        var fullName = "TTT.Shop.Items." + name;
         var q = from t in Assembly.GetExecutingAssembly().GetTypes()
             where t.IsClass && t.Namespace == fullName && t.GetInterface("IShopItem") != null
             select t;

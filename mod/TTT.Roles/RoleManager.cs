@@ -30,7 +30,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, _roundService, parent);
         ModelHandler.RegisterListener(parent);
-        //ShopManager.Register(parent, this); //disabled until items are implemented.
+        ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
         {

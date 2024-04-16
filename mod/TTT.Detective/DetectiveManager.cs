@@ -49,8 +49,11 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
             if (weaponService == null) return HookResult.Continue;
             if (weaponService.ActiveWeapon.Value == null) return HookResult.Continue;
-            
-            return weaponService.ActiveWeapon.Value.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
+            Server.NextFrame(() =>
+            {
+                Server.PrintToChatAll(weaponService.ActiveWeapon.Value.DesignerName);
+            });
+            return weaponService.ActiveWeapon.Value.DesignerName == "weapon_taser" ? HookResult.Stop : HookResult.Continue;
         }, HookMode.Pre);
     }
 

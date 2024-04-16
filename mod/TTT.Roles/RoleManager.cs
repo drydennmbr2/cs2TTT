@@ -30,7 +30,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, _roundService, parent);
         ModelHandler.RegisterListener(parent);
-        ShopManager.Register(parent, this); //disabled until items are implemented.
+        //ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
         {
@@ -82,12 +82,14 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         if (!attacker.IsReal() || !target.IsReal()) return HookResult.Continue;
         
         if (IsTraitor(target)) _traitorsLeft--;
+        
         if (IsDetective(target) || IsInnocent(target)) _innocentsLeft--;
 
         Server.NextFrame(() =>
         {
             Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
-
+            Server.PrintToChatAll(IsTraitor(target).ToString());
+            Server.PrintToChatAll(IsDetective(target).ToString());
             if (attacker == target) return;
         
             target.PrintToChat(StringUtils.FormatTTT(
@@ -131,7 +133,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             .ToList();
 
         var traitorCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 3));
-        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 8));
+        var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 4));
 
         _traitorsLeft = traitorCount;
         _innocentsLeft = eligible.Count - traitorCount - 1;
@@ -243,7 +245,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     
     public bool IsInnocent(CCSPlayerController player)
     {
-        return IsTraitor(player) || IsDetective(player);
+        return GetPlayer(player).PlayerRole() == Role.Innocent;
     }
 
     private void SetColors()

@@ -1,4 +1,5 @@
 ﻿using TTT.Player;
+using TTT.Public.Mod.Role;
 using TTT.Public.Shop;
 
 namespace TTT.Shop.Items.Traitor;
@@ -22,9 +23,10 @@ public class MuteLobbyItem : IShopItem
 
     public BuyResult OnBuy(GamePlayer player)
     {
+        if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
         return BuyResult.Successful;
     }
 }
-//I was thinking we could make this item mute everyone to cause a bit more chaos, and let the T's take advantage of it.
+//I was thinking we could make this item mute everyone for 10-15 seconds to cause a bit more chaos, and let the T's take advantage of it.

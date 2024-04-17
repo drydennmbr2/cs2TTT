@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.Public.Extensions;
@@ -8,6 +9,11 @@ public static class PlayerExtensions
     public static CsTeam GetTeam(this CCSPlayerController controller)
     {
         return (CsTeam)controller.TeamNum;
+    }
+    
+    public static string GetActiveWeaponName(this CCSPlayerController player)
+    {
+        return player.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName ?? string.Empty;
     }
 
     public static bool IsReal(this CCSPlayerController player)

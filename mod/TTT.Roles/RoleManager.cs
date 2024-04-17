@@ -30,7 +30,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _roundService = new RoundManager(this, parent);
         _infoManager = new InfoManager(this, _roundService, parent);
         ModelHandler.RegisterListener(parent);
-        //ShopManager.Register(parent, this); //disabled until items are implemented.
+        ShopManager.Register(parent, this); //disabled until items are implemented.
         
         parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
         {
@@ -57,10 +57,11 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
     [GameEventHandler]
     private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
     {
-        if (Utilities.GetPlayers().Count(player => player.IsReal() && player.Team != CsTeam.None || player.Team == CsTeam.Spectator) == 3)
+        if (Utilities.GetPlayers().Count(player => player.IsReal() && player.Team != CsTeam.None || player.Team == CsTeam.Spectator) <= 3)
         {
             _roundService.ForceEnd();
         }
+        
         CreatePlayer(@event.Userid);
         
         return HookResult.Continue;
@@ -88,15 +89,11 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         Server.NextFrame(() =>
         {
             Server.PrintToChatAll(StringUtils.FormatTTT($"{GetRole(target).FormatStringFullAfter(" has been found.")}"));
-            Server.PrintToChatAll(IsTraitor(target).ToString());
-            Server.PrintToChatAll(IsDetective(target).ToString());
             if (attacker == target) return;
         
             target.PrintToChat(StringUtils.FormatTTT(
                 $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
             attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
-            Server.PrintToChatAll(_innocentsLeft.ToString());
-            Server.PrintToChatAll(_traitorsLeft.ToString());
         });
         
         if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
@@ -113,14 +110,21 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
 
         foreach (var player in players) player.PrintToCenter(GetWinner().FormatStringFullAfter("s has won!"));
 
-        Clear();
+        Server.NextFrame(Clear);
         return HookResult.Continue;
     }
 
     [GameEventHandler]
     private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        RemovePlayer(@event.Userid);
+        var player = @event.Userid;
+        Server.NextFrame(() =>
+        {
+            RemovePlayer(player);
+            if (GetPlayers().Count == 0) _roundService.SetRoundStatus(RoundStatus.Paused);
+        });
+        
+        
         return HookResult.Continue;
     }
     
@@ -136,7 +140,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         var detectiveCount = (int)Math.Floor(Convert.ToDouble(eligible.Count / 4));
 
         _traitorsLeft = traitorCount;
-        _innocentsLeft = eligible.Count - traitorCount - 1;
+        _innocentsLeft = eligible.Count - traitorCount;
 
         if (detectiveCount > MaxDetectives) detectiveCount = MaxDetectives;
 
@@ -287,10 +291,10 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             
             int offset = Schema.GetSchemaOffset(className, fieldName);
 
-            VirtualFunctions.StateChanged(entity.NetworkTransmitComponent.Handle, player.Player().Handle, offset, -1, -1);
+            VirtualFunctions.StateChanged(player.Player().NetworkTransmitComponent.Handle, entity.Handle, offset, -1, -1);
 
-            entity.LastNetworkChange = Server.CurrentTime;
-            entity.IsSteadyState.Clear();
+            player.Player().LastNetworkChange = Server.CurrentTime;
+            player.Player().IsSteadyState.Clear();
         }
     }
     

@@ -38,12 +38,17 @@ public class ShopManager
         {
             case Role.Innocent:
                 _innocentShopManager.Open(player.Player());
+                player.SetShopOpen(true);
                 break;
             case Role.Detective:
                 _detectiveShopManager.Open(player.Player());
+                player.SetShopOpen(true);
                 break;
             case Role.Traitor:
                 _traitorShopManager.Open(player.Player());
+                player.SetShopOpen(true);
+                break;
+            case Role.Unassigned:
                 break;
         }
     }

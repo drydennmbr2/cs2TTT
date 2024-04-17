@@ -63,6 +63,15 @@ public class ShopMenu
 
     public void Create()
     {
+        foreach (var option in _menu.MenuOptions.Where(option => option.Text.Equals("close")))
+        {
+            option.OnSelect += (player, _) =>
+            {
+                var gamePlayer = _playerService.GetPlayer(player);
+                gamePlayer.SetShopOpen(false);
+            };
+        }
+
         for (var index = 0; index < _shopItemHandler.GetShopItems().Count; index++)
         {
             var item = _shopItemHandler.GetShopItems().ElementAt(index);
@@ -73,6 +82,7 @@ public class ShopMenu
     
     public void Open(CCSPlayerController player)
     {
-        MenuManager.OpenChatMenu(player, _menu);
+        _menu.Open(player);
+        
     }
 }

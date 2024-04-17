@@ -41,19 +41,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             if (attacker == hook.GetParam<CBaseEntity>(0)) return HookResult.Continue;
 
             if (!attacker.IsReal()) return HookResult.Continue;
-            var pawn = attacker.PlayerPawn.Value;
-            if (pawn == null) return HookResult.Continue;
-            if (!pawn.IsValid) return HookResult.Continue;
 
-            var weaponService = pawn.WeaponServices;
-
-            if (weaponService == null) return HookResult.Continue;
-            if (weaponService.ActiveWeapon.Value == null) return HookResult.Continue;
-            Server.NextFrame(() =>
-            {
-                Server.PrintToChatAll(weaponService.ActiveWeapon.Value.DesignerName);
-            });
-            return weaponService.ActiveWeapon.Value.DesignerName == "weapon_taser" ? HookResult.Stop : HookResult.Continue;
+            var weapon = attacker.GetActiveWeaponName();
+            
+            return weapon.Equals("weapon_taser") ? HookResult.Stop : HookResult.Continue;
         }, HookMode.Pre);
     }
 
@@ -79,11 +70,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         if (!activeWeapon.DesignerName.Equals("weapon_taser")) return HookResult.Continue;
         
         var targetRole = _roleService.GetRole(target);
-
         
         Server.NextFrame(() =>
         {
-            attacker.PrintToChat(StringUtils.FormatTTT($"You tased player {targetRole.FormatStringFullAfter(target.PlayerName)}"));
+            attacker.PrintToChat(StringUtils.FormatTTT($"You tased player {target.PlayerName} they are a {targetRole.FormatRoleFull()}"));
         });
         
         return HookResult.Changed;

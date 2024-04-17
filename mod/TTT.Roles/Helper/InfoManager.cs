@@ -23,7 +23,7 @@ public class InfoManager
         _roleService = roleService;
         _manager = manager;
         plugin.RegisterListener<Listeners.OnTick>(OnTick);
-        plugin.AddTimer(3f, OnTickAll
+        plugin.AddTimer(1.5f, OnTickAll
         ,TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
     }
 
@@ -48,6 +48,7 @@ public class InfoManager
             if (playerRole == Role.Unassigned) continue;
             if (_manager.GetRoundStatus() != RoundStatus.Started) return;
             if (!player.PawnIsAlive) continue;
+            if (gamePlayer.ShopOpen()) continue;
             
             if (!_playerLookAtRole.TryGetValue(player, out var value))
             {
@@ -58,7 +59,7 @@ public class InfoManager
             if (playerRole == Role.Innocent || (value.Item2 == Role.Traitor && playerRole == Role.Detective))
             {
                 Server.NextFrame(() => player.PrintToCenterHtml($"<font class='fontsize=m' color='red'>Your Role: {playerRole.GetCenterRole()} <br>"
-                                                                + $"<font class='fontsize=m' color='red'>Their Role: {Role.Unassigned.GetCenterRole()}"));
+                                                                + $"<font class='fontsize=m' color='red'>{value.Item1.PlayerName}'s Role: {Role.Unassigned.GetCenterRole()}"));
                 continue;
             }
             

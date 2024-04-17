@@ -1,4 +1,5 @@
-﻿using TTT.Player;
+﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
+using TTT.Player;
 using TTT.Public.Mod.Role;
 using TTT.Public.Shop;
 
@@ -26,10 +27,9 @@ public class AkItem : IShopItem
     {
         if (player.Credits() < Price()) return BuyResult.NotEnoughCredits;
         if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
-        //player.RemoveCredits(Price());
-
+        player.RemoveCredits(Price());
         var playerObject = player.Player();
-        
+        playerObject.GiveNamedItem(CsItem.AK47);
         return BuyResult.Successful;
     }
 }

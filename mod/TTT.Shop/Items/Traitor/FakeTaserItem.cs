@@ -9,12 +9,12 @@ public class FakeTaserItem : IShopItem
 {
     public string Name()
     {
-        return "Taser";
+        return "Fake Taser";
     }
 
     public string SimpleName()
     {
-        return "taser";
+        return "faketaser";
     }
 
     public int Price()

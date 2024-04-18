@@ -42,8 +42,8 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             if (prop.OwnerEntity.Value == null) return;
             if (prop.OwnerEntity.Value is not CCSPlayerController player) return;
             
+            Server.PrintToConsole(player.PlayerName);
             GetPlayer(player).SetRagdollProp(prop);
-            Server.NextFrame(() => Server.PrintToChatAll(player.PlayerName));
         });
         
         parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);

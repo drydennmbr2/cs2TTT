@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
@@ -41,6 +42,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
             if (prop.OwnerEntity.Value == null) return;
             if (prop.OwnerEntity.Value is not CCSPlayerController player) return;
             
+            GetPlayer(player).SetRagdollProp(prop);
             Server.NextFrame(() => Server.PrintToChatAll(player.PlayerName));
         });
         
@@ -100,6 +102,8 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
                 $"You were killed by {GetRole(attacker).FormatStringFullAfter(" " + attacker.PlayerName)}."));
             attacker.PrintToChat(StringUtils.FormatTTT($"You killed {GetRole(target).FormatStringFullAfter(" " + target.PlayerName)}."));
         });
+        
+        GetPlayer(target).SetKiller(attacker);
         
         if (_traitorsLeft == 0 || _innocentsLeft == 0) Server.NextFrame(() => _roundService.ForceEnd());
 
@@ -202,6 +206,7 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         GetPlayer(player).SetPlayerRole(Role.Detective);
         player.SwitchTeam(CsTeam.CounterTerrorist);
         player.PrintToCenter(Role.Detective.FormatStringFullBefore("You are now a(n)"));
+        player.GiveNamedItem(CsItem.Taser);
         ModelHandler.SetModelNextServerFrame(player, ModelHandler.ModelPathCtmSas);
     }
 

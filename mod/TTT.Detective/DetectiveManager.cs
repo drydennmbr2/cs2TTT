@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
+using TTT.Player;
 using TTT.Public.Behaviors;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
@@ -91,29 +92,42 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var entity = GetNearbyEntity(caller);
 
         if (entity == null) return;
-
-        var killerEntity = entity.Killer.Value;
         
         if (entity.RagdollSource.Value == null) return;
         if (entity.RagdollSource.Value.OwnerEntity.Value == null) return;
         
-        var controller = entity.RagdollSource.Value.OwnerEntity.Value.As<CCSPlayerController>();
         
-        var controllerRole = _roleService.GetRole(controller);
 
+        CCSPlayerController? killerEntity = null;
+        GamePlayer? plr = null;
+        foreach (var player in _roleService.Players())
+        {
+            if (player.RagdollProp() == null) continue;
+            if (!player.RagdollProp()!.Equals(entity)) continue;
+            
+            if (player.Killer() == null) continue;
+
+            plr = player;
+            killerEntity = player.Killer();
+        }
+        
+        if (plr == null) return;
+         
         string message;
         
         if (killerEntity == null || !killerEntity.IsValid)
         {
-            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by world"));
+            message = StringUtils.FormatTTT(plr.PlayerRole().FormatStringFullAfter("was killed by world"));
         }
         else
         {
-            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by ") + _roleService.GetRole((CCSPlayerController)killerEntity).FormatRoleFull());
+            message = StringUtils.FormatTTT(plr.PlayerRole().FormatStringFullAfter("was killed by ") + _roleService.GetRole(killerEntity).FormatRoleFull());
         }
         
-        if (_roleService.GetRole(caller) == Role.Detective)
-            Server.PrintToChatAll(message);
+        if (_roleService.GetRole(caller) != Role.Detective) return;
+            
+        Server.PrintToChatAll(message);
+        plr.SetRagdollProp(null);
     }
 
     private static CRagdollProp? GetNearbyEntity(CCSPlayerController player)
@@ -121,16 +135,10 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var entities = Utilities
             .GetAllEntities()
             .Where(entity => entity.IsValid)
-            .Where(entity =>
-            {
-                return entity is CRagdollProp;
-            })
+            .Where(entity => entity is CRagdollProp)
             .ToList();
         
-        if (!entities.Any(entity =>
-            {
-                return IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin);
-            })) return null;
+        if (!entities.Any(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin))) return null;
     
         var entity = entities.First(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin));
 

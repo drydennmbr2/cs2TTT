@@ -31,12 +31,17 @@ public class RoleManager : PlayerHandler, IRoleService, IPluginBehavior
         _infoManager = new InfoManager(this, _roundService, parent);
         ModelHandler.RegisterListener(parent);
         ShopManager.Register(parent, this); //disabled until items are implemented.
+        CreditManager.Register(parent, this);
         
         parent.RegisterListener<Listeners.OnEntitySpawned>((entity) =>
         {
             if (entity.IsValid) return;
             if (entity is not CRagdollProp prop) return;
             
+            if (prop.OwnerEntity.Value == null) return;
+            if (prop.OwnerEntity.Value is not CCSPlayerController player) return;
+            
+            Server.NextFrame(() => Server.PrintToChatAll(player.PlayerName));
         });
         
         parent.RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);

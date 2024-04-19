@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.Public.Extensions;
@@ -16,10 +17,23 @@ public static class PlayerExtensions
         return player.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName ?? string.Empty;
     }
 
+    public static CCSPlayerController? GetClientAimTarget(this CCSPlayerController player, string value)
+    {
+        var GameRules = Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").FirstOrDefault()?.GameRules;
+
+        if (GameRules is null)
+            return null;
+
+        VirtualFunctionWithReturn<IntPtr, IntPtr, IntPtr> findPickerEntity = new(GameRules.Handle, 28);
+        var target = new CBaseEntity(findPickerEntity.Invoke(GameRules.Handle, player.Handle));
+
+        return target.DesignerName.Equals(value) ? target.As<CCSPlayerPawn>().OriginalController.Value : null;
+    }
+    
     public static bool IsReal(this CCSPlayerController player)
     {
         //  Do nothing else before this:
-        //  Verifies the handle points to an entity within the global entity list.
+            //  Verifies the handle points to an entity within the global entity list.
         if (!player.IsValid)
             return false;
 

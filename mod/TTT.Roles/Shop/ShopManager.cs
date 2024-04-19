@@ -10,18 +10,14 @@ namespace TTT.Roles.Shop;
 
 public class ShopManager
 {
-    private readonly ShopMenu _innocentShopManager;
-    private readonly ShopMenu _detectiveShopManager;
-    private readonly ShopMenu _traitorShopManager;
     private readonly IPlayerService _playerService;
+    private readonly BasePlugin _plugin;
     private static ShopManager Manager;
     
     private ShopManager(BasePlugin plugin, IPlayerService manager)
     {
         _playerService = manager;
-        _innocentShopManager = new ShopMenu(BaseShopHandler.Get(), manager);
-        _detectiveShopManager = new ShopMenu(DetectiveShopHandler.Get(), manager);
-        _traitorShopManager = new ShopMenu(TraitorShopHandler.Get(), manager);
+        _plugin = plugin;
         plugin.AddCommand("css_shop", "Open the shop menu", OnShopCommand);
         plugin.AddCommand("css_buy", "Buys specified item", OnBuyCommand);
     }
@@ -37,15 +33,16 @@ public class ShopManager
         switch (role)
         {
             case Role.Innocent:
-                _innocentShopManager.Open(player.Player());
+                new ShopMenu(_plugin, BaseShopHandler.Get(), player).Open(player.Player());
                 player.SetShopOpen(true);
                 break;
             case Role.Detective:
-                _detectiveShopManager.Open(player.Player());
+                new ShopMenu(_plugin, DetectiveShopHandler.Get(), player).Open(player.Player());
+
                 player.SetShopOpen(true);
                 break;
             case Role.Traitor:
-                _traitorShopManager.Open(player.Player());
+                new ShopMenu(_plugin, TraitorShopHandler.Get(), player).Open(player.Player());
                 player.SetShopOpen(true);
                 break;
             case Role.Unassigned:
@@ -84,13 +81,13 @@ public class ShopManager
         switch (gamePlayer.PlayerRole())
         {
             case Role.Traitor:
-                _traitorShopManager.BuyItem(gamePlayer, item);
+                TraitorShopHandler.Get().BuyItem(gamePlayer, item);
                 break;
             case Role.Detective:
-                _detectiveShopManager.BuyItem(gamePlayer, item);
+                DetectiveShopHandler.Get().BuyItem(gamePlayer, item);
                 break;
             case Role.Innocent:
-                _innocentShopManager.BuyItem(gamePlayer, item);
+                BaseShopHandler.Get().BuyItem(gamePlayer, item);
                 break;
             case Role.Unassigned:
                 break;

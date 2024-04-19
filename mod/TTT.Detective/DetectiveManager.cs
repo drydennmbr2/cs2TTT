@@ -57,18 +57,8 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
 
         if (attacker == null || target == null) return HookResult.Continue;
         
-        var pawn = attacker.PlayerPawn.Value;
-        
-        if (pawn == null) return HookResult.Continue;
-        if (!pawn.IsValid) return HookResult.Continue;
-
-        var weaponService = pawn.WeaponServices;
-        if (weaponService == null) return HookResult.Continue;
-        if (weaponService.ActiveWeapon.Value == null) return HookResult.Continue;
-        
-        var activeWeapon = weaponService.ActiveWeapon.Value;
-        if (activeWeapon == null) return HookResult.Continue;
-        if (!activeWeapon.DesignerName.Equals("weapon_taser")) return HookResult.Continue;
+       
+        if (!attacker.GetActiveWeaponName().Equals("weapon_taser")) return HookResult.Continue;
         
         var targetRole = _roleService.GetRole(target);
         
@@ -89,14 +79,9 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     {
         //add states
 
-        var entity = GetNearbyEntity(caller);
+        var entity = caller.GetClientAimTarget("ragdoll");
 
         if (entity == null) return;
-        
-        if (entity.RagdollSource.Value == null) return;
-        if (entity.RagdollSource.Value.OwnerEntity.Value == null) return;
-        
-        
 
         CCSPlayerController? killerEntity = null;
         GamePlayer? plr = null;
@@ -128,27 +113,5 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
             
         Server.PrintToChatAll(message);
         plr.SetRagdollProp(null);
-    }
-
-    private static CRagdollProp? GetNearbyEntity(CCSPlayerController player)
-    {
-        var entities = Utilities
-            .GetAllEntities()
-            .Where(entity => entity.IsValid)
-            .Where(entity => entity is CRagdollProp)
-            .ToList();
-        
-        if (!entities.Any(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin))) return null;
-    
-        var entity = entities.First(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin));
-
-        return (CRagdollProp)entity;
-    }
-
-    private static bool IsClose(Vector? from, Vector? to)
-    {
-        if (from == null || to == null) return false;
-        var length = from.Length2D() - to.Length2D();
-        return length is > 0 and < 10;
     }
 }

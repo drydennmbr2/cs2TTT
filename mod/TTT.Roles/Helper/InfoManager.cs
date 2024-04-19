@@ -83,26 +83,11 @@ public class InfoManager
         
         _playerLookAtRole.Clear();
         foreach (var player in players)
-        {
-            var playerAngles = player.PlayerPawn.Value.EyeAngles;
-            Vector3 vec1 = new(playerAngles.X, playerAngles.Y, playerAngles.Z);
-            foreach (var target in players)
-            {
-                if (player == target) continue;
-
-                var targetAngles = target.PlayerPawn.Value.EyeAngles;
-                Vector3 vec2 = new(targetAngles.X, targetAngles.Y, targetAngles.Z);
-                
-                if (vec1.Length() - vec2.Length() > 10) continue;
-                
-                var angleInRadians = Math.Acos(Vector3.Dot(vec1, vec2) / (vec1.Length() * vec2.Length()));
-                var degree = (Math.PI * 2) / angleInRadians;
-                if (degree is < 7 or > -7)
-                {
-                    RegisterLookAtRole(player, new Tuple<CCSPlayerController, Role>(target, _roleService.GetPlayer(target).PlayerRole()));
-                    break;
-                }
-            }
+        { 
+            var target = player.GetClientAimTarget("player");
+            if (target == null) continue;
+            
+            RegisterLookAtRole(player, new Tuple<CCSPlayerController, Role>(target, _roleService.GetRole(target)));
         }
     }
 }

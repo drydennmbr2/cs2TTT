@@ -8,14 +8,13 @@ namespace TTT.Public.Shop;
 
 public class ShopMenu
 {
-    private readonly ChatMenu _menu = new("Shop Menu");
-    private readonly IPlayerService _playerService;
+    private readonly CenterHtmlMenu _menu;
+    private readonly GamePlayer _playerService;
     private readonly IShopItemHandler _shopItemHandler;
-    private int _currentPage;
 
-    public ShopMenu(IShopItemHandler shopItemHandler, IPlayerService playerService, int currentPage = 0)
+    public ShopMenu(BasePlugin plugin, IShopItemHandler shopItemHandler, GamePlayer playerService)
     {
-        _currentPage = currentPage;
+        _menu = new CenterHtmlMenu($"Shop - {playerService.Credits()} credits", plugin);
         _shopItemHandler = shopItemHandler;
         _playerService = playerService;
         Create();
@@ -67,8 +66,7 @@ public class ShopMenu
         {
             option.OnSelect += (player, _) =>
             {
-                var gamePlayer = _playerService.GetPlayer(player);
-                gamePlayer.SetShopOpen(false);
+                _playerService.SetShopOpen(false);
             };
         }
 
@@ -76,7 +74,7 @@ public class ShopMenu
         {
             var item = _shopItemHandler.GetShopItems().ElementAt(index);
             _menu.AddMenuOption(item.Name() + $" - {item.Price()} credits",
-                (player, _) => BuyItem(_playerService.GetPlayer(player), item));
+                (player, _) => BuyItem(_playerService, item));
         }
     }
     

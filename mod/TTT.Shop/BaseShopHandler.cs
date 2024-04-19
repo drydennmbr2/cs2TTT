@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using TTT.Player;
 using TTT.Public.Behaviors;
+using TTT.Public.Formatting;
 using TTT.Public.Shop;
 using TTT.Shop.Items;
 
@@ -20,7 +22,7 @@ public class BaseShopHandler : IShopItemHandler, IPluginBehavior
 
     protected void AddItems(string name)
     {
-        var fullName = "TTT.Shop.Items" + name;
+        var fullName = "TTT.Shop.Items." + name;
         var q = from t in Assembly.GetExecutingAssembly().GetTypes()
             where t.IsClass && t.Namespace == fullName && t.GetInterface("IShopItem") != null
             select t;
@@ -31,6 +33,39 @@ public class BaseShopHandler : IShopItemHandler, IPluginBehavior
             var item = (IShopItem?) Activator.CreateInstance(type);
             if (item == null) return;
             AddShopItem(item);
+        }
+    }
+    
+    public void BuyItem(GamePlayer player, string itemName)
+    {
+        foreach (var item in _items)
+        {
+            if (!item.SimpleName().Equals(itemName)) continue;
+            BuyItem(player, item);
+            return;
+        }
+    }
+    
+    private void BuyItem(GamePlayer player, IShopItem item)
+    {
+        var successful = item.OnBuy(player);
+        switch (successful)
+        {
+            case BuyResult.NotEnoughCredits:
+                player.Player()
+                    .PrintToChat(StringUtils.FormatTTT($"You don't have enough credits to buy {item.Name()}"));
+                break;
+            case BuyResult.Successful:
+                player.Player().PrintToChat(StringUtils.FormatTTT($"You have bought {item.Name()}"));
+                player.AddItem(item);
+                break;
+            case BuyResult.AlreadyOwned:
+                player.Player().PrintToChat(StringUtils.FormatTTT($"You already own {item.Name()}"));
+                break;
+            case BuyResult.IncorrectRole:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 

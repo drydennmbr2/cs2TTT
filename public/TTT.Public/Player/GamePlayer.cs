@@ -16,6 +16,7 @@ public class GamePlayer : IInventory
     private CCSPlayerController? _killer;
     private CRagdollProp? _ragdollProp;
     private readonly List<IShopItem> _items = [];
+    private bool _shopOpen = false;
 
     public GamePlayer(Role playerRole, long credits, int karma, int playerId)
     {
@@ -72,7 +73,7 @@ public class GamePlayer : IInventory
         _karma -= 5;
         if (_karma >= 40) return;
         _karma = 80;
-        Server.ExecuteCommand($"css_ban #{_playerId} 1440 Karma too low");
+        //Server.ExecuteCommand($"css_ban #{_playerId} 1440 Karma too low");
     }
 
     public void SetPlayerRole(Role role)
@@ -118,5 +119,15 @@ public class GamePlayer : IInventory
     public void SetRagdollProp(CRagdollProp? prop)
     {
         _ragdollProp = prop;
+    }
+    
+    public void SetShopOpen(bool open)
+    {
+        _shopOpen = open;
+    }
+    
+    public bool ShopOpen()
+    {
+        return _shopOpen;
     }
 }

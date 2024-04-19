@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
+using TTT.Player;
 using TTT.Public.Behaviors;
 using TTT.Public.Extensions;
 using TTT.Public.Formatting;
@@ -32,12 +33,19 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
                 OnPlayerUse(player);
             }
         });
+        
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(hook =>
         {
-            CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
+            var info = hook.GetParam<CTakeDamageInfo>(1);
             if (info.Attacker.Value == null || !info.Attacker.Value.IsValid) return HookResult.Continue;
             var attacker = info.Attacker.Value.As<CCSPlayerController>();
-            return attacker.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value?.DesignerName != "weapon_taser" ? HookResult.Continue : HookResult.Stop;
+            if (attacker == hook.GetParam<CBaseEntity>(0)) return HookResult.Continue;
+
+            if (!attacker.IsReal()) return HookResult.Continue;
+
+            var weapon = attacker.GetActiveWeaponName();
+            
+            return weapon.Equals("weapon_taser") ? HookResult.Stop : HookResult.Continue;
         }, HookMode.Pre);
     }
 
@@ -48,26 +56,15 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
         var target = @event.Userid;
 
         if (attacker == null || target == null) return HookResult.Continue;
-        if (!attacker.IsValid || !target.IsValid) return HookResult.Continue;
-        if (attacker.PlayerPawn.Value.WeaponServices.ActiveWeapon.Value.DesignerName != "weapon_taser")
-            return HookResult.Continue;
-        if (_roleService.GetRole(attacker) != Role.Detective) return HookResult.Continue;
-
+        
+       
+        if (!attacker.GetActiveWeaponName().Equals("weapon_taser")) return HookResult.Continue;
+        
         var targetRole = _roleService.GetRole(target);
-
-        var pawn = attacker.PlayerPawn.Value;
-        if (pawn == null) return HookResult.Continue;
-
-        var weaponServices = pawn.WeaponServices;
-        if (weaponServices == null) return HookResult.Continue;
-
-        var activeWeapon = weaponServices.ActiveWeapon.Value;
-
-        if (activeWeapon == null) return HookResult.Continue;
-
+        
         Server.NextFrame(() =>
         {
-            attacker.PrintToChat(targetRole.FormatStringFullBefore("[TTT] You tased player: "));
+            attacker.PrintToChat(StringUtils.FormatTTT($"You tased player {target.PlayerName} they are a {targetRole.FormatRoleFull()}"));
         });
         
         return HookResult.Changed;
@@ -82,59 +79,39 @@ public class DetectiveManager : IDetectiveService, IPluginBehavior
     {
         //add states
 
-        var entity = GetNearbyEntity(caller);
+        var entity = caller.GetClientAimTarget("ragdoll");
 
         if (entity == null) return;
 
-        var killerEntity = entity.Killer.Value;
+        CCSPlayerController? killerEntity = null;
+        GamePlayer? plr = null;
+        foreach (var player in _roleService.Players())
+        {
+            if (player.RagdollProp() == null) continue;
+            if (!player.RagdollProp()!.Equals(entity)) continue;
+            
+            if (player.Killer() == null) continue;
+
+            plr = player;
+            killerEntity = player.Killer();
+        }
         
-        var controller = entity.RagdollSource.Value.As<CCSPlayerController>();
-
-        var controllerRole = _roleService.GetRole(controller);
-
+        if (plr == null) return;
+         
         string message;
         
         if (killerEntity == null || !killerEntity.IsValid)
         {
-            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by world"));
+            message = StringUtils.FormatTTT(plr.PlayerRole().FormatStringFullAfter("was killed by world"));
         }
         else
         {
-            message = StringUtils.FormatTTT(controllerRole.FormatStringFullAfter("was killed by ") + _roleService.GetRole((CCSPlayerController)killerEntity).FormatRoleFull());
+            message = StringUtils.FormatTTT(plr.PlayerRole().FormatStringFullAfter("was killed by ") + _roleService.GetRole(killerEntity).FormatRoleFull());
         }
         
-        if (_roleService.GetRole(caller) == Role.Detective)
-            Server.PrintToChatAll(message);
-    }
-
-    private static CRagdollProp? GetNearbyEntity(CCSPlayerController player)
-    {
-        var entities = Utilities
-            .GetAllEntities()
-            .Where(entity => entity.IsValid)
-            .Where(entity =>
-            {
-                Server.NextFrame(() => player.PrintToChat(entity.ToString() ?? string.Empty));
-                return entity is CRagdollProp;
-            })
-            .ToList();
-        
-        if (!entities.Any(entity =>
-            {
-                Server.NextFrame(() => player.PrintToChat(IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin).ToString()));
-                return IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin);
-            })) return null;
-    
-        var entity = entities.First(entity => IsClose(player.AbsOrigin, ((CRagdollProp)entity).AbsOrigin));
-        Server.NextFrame(() => player.PrintToChat(entity.ToString()));
-
-        return (CRagdollProp)entity;
-    }
-
-    private static bool IsClose(Vector? from, Vector? to)
-    {
-        if (from == null || to == null) return false;
-        var length = from.Length2D() - to.Length2D();
-        return length is > 0 and < 10;
+        if (_roleService.GetRole(caller) != Role.Detective) return;
+            
+        Server.PrintToChatAll(message);
+        plr.SetRagdollProp(null);
     }
 }

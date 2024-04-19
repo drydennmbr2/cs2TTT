@@ -60,7 +60,6 @@ public class RoundManager : IRoundService
                 ForceStart();
                 break;
             case RoundStatus.Paused:
-                ForceEnd();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(roundStatus), roundStatus, "Invalid round status.");
@@ -78,14 +77,14 @@ public class RoundManager : IRoundService
         if (_roundStatus != RoundStatus.Waiting) return;
 
         _round.Tick();
-        AddGracePeriod();
+        //AddGracePeriod();
 
         if (_round.GraceTime() != 0) return;
 
         if (Utilities.GetPlayers().Where(player => player is { IsValid: true, PawnIsAlive: true }).ToList().Count <= 2)
         {
-            ForceEnd();
             Server.PrintToChatAll(StringUtils.FormatTTT("Not enough players to start the round. Round has been ended."));
+            _roundStatus = RoundStatus.Paused;
             return; 
         }
         
@@ -97,7 +96,7 @@ public class RoundManager : IRoundService
     {
         foreach (var player in Utilities.GetPlayers().Where(player => player.IsReal()).Where(player => player.IsReal())
                      .ToList()) player.VoiceFlags = VoiceFlags.Normal;
-        RemoveGracePeriod();
+        //RemoveGracePeriod();
         _round!.Start(); 
     }
 

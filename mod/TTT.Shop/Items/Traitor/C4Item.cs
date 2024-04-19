@@ -28,6 +28,7 @@ public class C4Item : IShopItem
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
         player.Player().GiveNamedItem(CsItem.C4);
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
 
     }

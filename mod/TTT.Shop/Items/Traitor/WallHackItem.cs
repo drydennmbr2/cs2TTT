@@ -25,6 +25,9 @@ public class WallHackItem : IShopItem
 
     public BuyResult OnBuy(GamePlayer player)
     {
-        return player.PlayerRole() != Role.Traitor ? BuyResult.IncorrectRole : BuyResult.Successful;
+        if (player.PlayerRole() != Role.Traitor)
+            return BuyResult.IncorrectRole; 
+        player.RemoveCredits(Price());
+        return BuyResult.Successful;
     }
 }

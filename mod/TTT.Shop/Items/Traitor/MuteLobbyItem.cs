@@ -26,6 +26,7 @@ public class MuteLobbyItem : IShopItem
         if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
     }
 }

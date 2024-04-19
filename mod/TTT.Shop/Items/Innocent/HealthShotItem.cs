@@ -27,6 +27,7 @@ public class HealthShotItem : IShopItem
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
         player.Player().GiveNamedItem(CsItem.Healthshot);
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
     }
 }

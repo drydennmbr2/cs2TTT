@@ -1,35 +1,32 @@
 ﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
 using TTT.Player;
-using TTT.Public.Mod.Role;
 using TTT.Public.Shop;
 
-namespace TTT.Shop.Items.Traitor;
+namespace TTT.Shop.Items.Innocent;
 
-public class FakeTaserItem : IShopItem
+public class ArmourItem : IShopItem
 {
     public string Name()
     {
-        return "Fake Taser";
+        return "Armour";
     }
 
     public string SimpleName()
     {
-        return "faketaser";
+        return "armour";
     }
 
     public int Price()
     {
-        return 1250;
+        return 500;
     }
 
     public BuyResult OnBuy(GamePlayer player)
     {
-        if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
-        player.Player().GiveNamedItem(CsItem.Taser);
+        player.Player().GiveNamedItem(CsItem.KevlarHelmet);
         player.RemoveCredits(Price());
         return BuyResult.Successful;
     }
 }
-    

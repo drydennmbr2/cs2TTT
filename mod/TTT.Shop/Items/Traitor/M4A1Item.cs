@@ -5,21 +5,21 @@ using TTT.Public.Shop;
 
 namespace TTT.Shop.Items.Traitor;
 
-public class FakeTaserItem : IShopItem
+public class M4A1Item : IShopItem
 {
     public string Name()
     {
-        return "Fake Taser";
+        return "M4A1-S";
     }
 
     public string SimpleName()
     {
-        return "faketaser";
+        return "m4a1";
     }
 
     public int Price()
     {
-        return 1250;
+        return 250;
     }
 
     public BuyResult OnBuy(GamePlayer player)
@@ -27,9 +27,8 @@ public class FakeTaserItem : IShopItem
         if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
-        player.Player().GiveNamedItem(CsItem.Taser);
+        player.Player().GiveNamedItem(CsItem.M4A1);
         player.RemoveCredits(Price());
         return BuyResult.Successful;
     }
 }
-    

@@ -28,6 +28,7 @@ public class AssaultSuitItem
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
         player.Player().GiveNamedItem(CsItem.AssaultSuit);
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
 
     }

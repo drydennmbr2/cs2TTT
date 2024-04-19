@@ -22,6 +22,7 @@ public class DNAScannerItem : IShopItem
 
     public BuyResult OnBuy(GamePlayer player)
     {
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
     }
 }

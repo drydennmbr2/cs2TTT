@@ -28,6 +28,7 @@ public class TAGrenadeItem : IShopItem
         if (player.Credits() < Price())
             return BuyResult.NotEnoughCredits;
         player.Player().GiveNamedItem(CsItem.TAGrenade);
+        player.RemoveCredits(Price());
         return BuyResult.Successful;
 
     }

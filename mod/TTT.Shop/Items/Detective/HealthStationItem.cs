@@ -1,34 +1,33 @@
-﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
-using TTT.Player;
+﻿using TTT.Player;
 using TTT.Public.Mod.Role;
 using TTT.Public.Shop;
 
+
 namespace TTT.Shop.Items.Detective;
 
-public class SheildItem : IShopItem
+public class HealthStationItem : IShopItem
 {
     public string Name()
     {
-        return "Sheild";
+        return "Health Station";
     }
 
     public string SimpleName()
     {
-        return "Sheild";
+        return "Healthstation";  //health to nearby people over time I'd say 5 health per second within 5 meters?
     }
 
     public int Price()
     {
-        return 550;
+        return 1500;
+    
+        
+        
     }
-
     public BuyResult OnBuy(GamePlayer player)
     {
         if (player.PlayerRole() != Role.Detective) return BuyResult.IncorrectRole;
-        if (player.Credits() < Price())
-            return BuyResult.NotEnoughCredits;
-        player.Player().GiveNamedItem(CsItem.Shield);
         player.RemoveCredits(Price());
-        return BuyResult.Successful;
+        return player.Credits() < Price() ? BuyResult.NotEnoughCredits : BuyResult.Successful;
     }
 }

@@ -5,16 +5,16 @@ using TTT.Public.Shop;
 
 namespace TTT.Shop.Items.Traitor;
 
-public class FakeTaserItem : IShopItem
+public class HurtStationItem : IShopItem
 {
     public string Name()
     {
-        return "Fake Taser";
+        return "Hurt Station";
     }
 
     public string SimpleName()
     {
-        return "faketaser";
+        return "hurtstation";  //does damage to nearby people over time i'd say 15 damage per second within 5-10 meters?
     }
 
     public int Price()
@@ -25,11 +25,7 @@ public class FakeTaserItem : IShopItem
     public BuyResult OnBuy(GamePlayer player)
     {
         if (player.PlayerRole() != Role.Traitor) return BuyResult.IncorrectRole;
-        if (player.Credits() < Price())
-            return BuyResult.NotEnoughCredits;
-        player.Player().GiveNamedItem(CsItem.Taser);
         player.RemoveCredits(Price());
-        return BuyResult.Successful;
+        return player.Credits() < Price() ? BuyResult.NotEnoughCredits : BuyResult.Successful;
     }
 }
-    
